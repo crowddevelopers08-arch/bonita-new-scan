@@ -100,7 +100,7 @@ export function FormModal({ open, onOpenChange, onSubmit }: FormModalProps) {
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="problem" className="text-foreground">
-              Select Your Concern
+              Select Your Concerns
             </Label>
             <Select
               value={formData.problem}
