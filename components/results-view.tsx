@@ -204,6 +204,16 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
     <div style={{ minHeight: "100vh", background: "#080b12", color: "#f2f0eb", padding: "0" }}>
 
       {/* ── Top glow ── */}
+      <style>{`
+        .pdf-card-inner { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+        .pdf-dl-btn { display: flex; flex-shrink: 0; }
+        .mobile-dl-btn { display: none; }
+        @media (max-width: 480px) {
+          .pdf-card-inner { flex-direction: column; align-items: stretch; }
+          .pdf-dl-btn { display: none; }
+          .mobile-dl-btn { display: flex; }
+        }
+      `}</style>
       <div style={{ position: "fixed", inset: 0, background: "radial-gradient(ellipse 60% 40% at 50% 0%, rgba(221,185,90,0.07), transparent)", pointerEvents: "none", zIndex: 0 }} />
 
       <div style={{ position: "relative", zIndex: 1, maxWidth: "720px", margin: "0 auto", padding: "32px 16px 60px" }}>
@@ -238,6 +248,28 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
             <div style={{ height: "1px", width: 40, background: "linear-gradient(270deg, transparent, rgba(221,185,90,0.5))" }} />
           </div>
         </div>
+
+        {/* ── Mobile-only Download Button ── */}
+        <button
+          onClick={handleDownload}
+          disabled={pdfGenerating}
+          className="mobile-dl-btn"
+          style={{
+            alignItems: "center", justifyContent: "center", gap: "8px",
+            width: "100%", marginBottom: "20px",
+            background: "#ddb95a", color: "#080b12",
+            border: "none", borderRadius: "12px",
+            padding: "14px", fontSize: "1rem", fontWeight: 700,
+            cursor: pdfGenerating ? "not-allowed" : "pointer",
+            opacity: pdfGenerating ? 0.7 : 1,
+            boxShadow: "0 0 24px rgba(221,185,90,0.3)"
+          }}
+        >
+          {pdfGenerating
+            ? <Loader2 style={{ width: 18, height: 18, animation: "spin 1s linear infinite" }} />
+            : <Download style={{ width: 18, height: 18 }} />}
+          {pdfGenerating ? "Generating…" : "Download PDF"}
+        </button>
 
         {/* ── Analysis Summary ── */}
         <div style={{
@@ -290,7 +322,7 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
           boxShadow: "0 4px 30px rgba(221,185,90,0.08)"
         }}>
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(90deg, transparent, #ddb95a, transparent)" }} />
-          <div style={{ display: "flex", alignItems: "center", gap: "18px", flexWrap: "wrap" }}>
+          <div className="pdf-card-inner">
             <div style={{
               width: 52, height: 52, borderRadius: "14px", flexShrink: 0,
               border: "1px solid rgba(221,185,90,0.4)",
@@ -307,14 +339,15 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
             <button
               onClick={handleDownload}
               disabled={pdfGenerating}
+              className="pdf-dl-btn"
               style={{
-                display: "flex", alignItems: "center", gap: "8px",
+                alignItems: "center", gap: "8px",
                 background: "#ddb95a", color: "#080b12",
                 border: "none", borderRadius: "10px",
                 padding: "11px 22px", fontSize: "0.9rem", fontWeight: 700,
                 cursor: pdfGenerating ? "not-allowed" : "pointer",
                 opacity: pdfGenerating ? 0.7 : 1,
-                boxShadow: "0 0 20px rgba(221,185,90,0.3)", flexShrink: 0,
+                boxShadow: "0 0 20px rgba(221,185,90,0.3)",
                 transition: "all 0.2s"
               }}
             >
@@ -355,7 +388,7 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
 
       {/* ── PDF Form Dialog ── */}
       <Dialog open={pdfFormOpen} onOpenChange={(open) => !pdfGenerating && setPdfFormOpen(open)}>
-        <DialogContent className="border-primary/20 bg-card/95 backdrop-blur-xl sm:max-w-md">
+        <DialogContent data-pdf-dialog className="border-primary/20 bg-card/95 backdrop-blur-xl sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-center text-xl font-bold text-foreground">Download Your Guide</DialogTitle>
             <DialogDescription className="text-center text-sm text-muted-foreground">

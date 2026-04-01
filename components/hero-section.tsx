@@ -9,7 +9,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ onStartScan }: HeroSectionProps) {
   return (
-    <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-4">
+    <section className="relative flex max-sm:py-5 md:py-15 flex-col items-center justify-center overflow-hidden bg-background px-4">
       {/* Animated background effects */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {/* Grid pattern */}
@@ -29,14 +29,26 @@ export function HeroSection({ onStartScan }: HeroSectionProps) {
 
       {/* Content */}
       <div className="relative z-10 flex max-w-3xl flex-col items-center text-center">
+        {/* Logo */}
+        <div className="mb-8 max-sm:mb-4 relative">
+          <div className="absolute inset-0 rounded-2xl bg-primary/10 blur-xl" />
+          <div className="relative rounded-2xl border border-primary/20 bg-[#080b12]/80 px-6 py-3 backdrop-blur-sm shadow-[0_0_30px_rgba(221,185,90,0.12)]">
+            <img
+              src="/logo-1.png"
+              alt="Bonitaa HQ"
+              className="h-20 w-auto object-contain md:h-25"
+            />
+          </div>
+        </div>
+
         {/* Badge */}
-        <div className="mb-6 flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm text-primary">
+        <div className="mb-6 max-sm:mb-2 flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm text-primary">
           <Sparkles className="h-4 w-4" />
           <span>AI-Powered Hair Analysis</span>
         </div>
 
         {/* Main heading */}
-        <h1 className="mb-6 text-balance text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl">
+        <h1 className="mb-6 max-sm:mb-2 text-balance text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl">
          Bonitaa HQ – The Clinic That {" "}
           <span className="bg-gradient-to-r from-primary to-yellow-200 bg-clip-text text-transparent">
             Understands Indian Hair Problems 🌟
@@ -44,7 +56,7 @@ export function HeroSection({ onStartScan }: HeroSectionProps) {
         </h1>
 
         {/* Subheading */}
-        <p className="mb-10 max-w-xl text-pretty text-lg text-muted-foreground md:text-xl">
+        <p className="mb-10 max-sm:mb-4 max-w-xl text-pretty text-lg text-muted-foreground md:text-xl">
           Providing FDA-approved treatments, with 15+ years of experience and over 10,000 happy clients. Trusted across 22+ clinics in Tamil Nadu!
         </p>
 
