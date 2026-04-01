@@ -3,6 +3,7 @@
 import { useState } from "react"
 import dynamic from "next/dynamic"
 import { HeroSection } from "@/components/hero-section"
+import { InfoSection } from "@/components/info-section"
 import { FormModal, type FormData } from "@/components/form-modal"
 import { CameraModal } from "@/components/camera-modal"
 import { ScanLoader } from "@/components/scan-loader"
@@ -12,7 +13,7 @@ const ResultsView = dynamic(
   { ssr: false }
 )
 
-type AppState = "landing" | "form" | "camera" | "scanning" | "results"
+type AppState = "landing" | "camera" | "scanning" | "results"
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>("landing")
@@ -24,11 +25,6 @@ export default function Home() {
   const [capturedImage, setCapturedImage] = useState<string | null>(null)
 
   const handleStartScan = () => {
-    setAppState("form")
-  }
-
-  const handleFormSubmit = (data: FormData) => {
-    setFormData(data)
     setAppState("camera")
   }
 
@@ -37,19 +33,7 @@ export default function Home() {
     setAppState("scanning")
   }
 
-  const handleScanComplete = async () => {
-    if (capturedImage) {
-      await fetch("/api/save-scan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          phone: formData.phone,
-          problem: formData.problem,
-          imageData: capturedImage,
-        }),
-      }).catch((err) => console.error("Failed to save scan:", err))
-    }
+  const handleScanComplete = () => {
     setAppState("results")
   }
 
@@ -60,28 +44,20 @@ export default function Home() {
   }
 
   if (appState === "results") {
-    return <ResultsView formData={formData} onBack={handleBackToHome} />
+    return <ResultsView formData={formData} capturedImage={capturedImage} onBack={handleBackToHome} />
   }
 
   return (
     <main className="min-h-screen bg-background">
       <HeroSection onStartScan={handleStartScan} />
+      <InfoSection onStartScan={handleStartScan} />
 
-      {/* Form Modal */}
-      <FormModal
-        open={appState === "form"}
-        onOpenChange={(open) => !open && setAppState("landing")}
-        onSubmit={handleFormSubmit}
-      />
-
-      {/* Camera Modal */}
       <CameraModal
         open={appState === "camera"}
-        onOpenChange={(open) => !open && setAppState("form")}
+        onOpenChange={(open) => !open && setAppState("landing")}
         onCapture={handleCapture}
       />
 
-      {/* Scan Loader */}
       <ScanLoader
         open={appState === "scanning"}
         onOpenChange={() => {}}

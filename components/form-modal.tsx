@@ -62,7 +62,7 @@ export function FormModal({ open, onOpenChange, onSubmit }: FormModalProps) {
       <DialogContent className="border-primary/20 bg-card/95 backdrop-blur-xl sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold text-foreground">
-            Start Your Skin Analysis
+            Start Your Hair Analysis
           </DialogTitle>
           <DialogDescription className="text-center text-sm text-muted-foreground">
             Enter your details to begin the AI-powered scan
@@ -109,7 +109,7 @@ export function FormModal({ open, onOpenChange, onSubmit }: FormModalProps) {
               }
             >
               <SelectTrigger className="border-border/50 bg-background/50 focus:border-primary focus:ring-primary">
-                <SelectValue placeholder="Choose a skin concern" />
+                <SelectValue placeholder="Choose a hair concern" />
               </SelectTrigger>
               <SelectContent className="border-border bg-card">
                 <SelectItem value="acne">Acne</SelectItem>
@@ -122,7 +122,7 @@ export function FormModal({ open, onOpenChange, onSubmit }: FormModalProps) {
 
           <Button
             type="submit"
-            className="mt-2 w-full bg-primary text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_20px_rgba(0,255,200,0.4)]"
+            className="mt-2 w-full bg-primary text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_20px_rgba(221,185,90,0.4)]"
           >
             Continue
           </Button>

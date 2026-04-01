@@ -28,14 +28,14 @@ export function ScanLoader({ open, onOpenChange, capturedImage, onComplete }: Sc
     const texts = [
       "Initializing scan...",
       "Detecting facial features...",
-      "Analyzing skin texture...",
+      "Analyzing hair texture...",
       "Processing AI algorithms...",
       "Generating personalized results...",
     ]
 
     const interval = setInterval(() => {
       setProgress((prev) => {
-        const newProgress = prev + Math.random() * 8 + 2
+        const newProgress = prev + Math.random() * 2 + 0.5
         if (newProgress >= 100) {
           clearInterval(interval)
           setIsComplete(true)
@@ -60,13 +60,13 @@ export function ScanLoader({ open, onOpenChange, capturedImage, onComplete }: Sc
         className="border-primary/20 bg-card/95 backdrop-blur-xl sm:max-w-md"
       >
         <div className="flex flex-col items-center p-6">
-          <DialogTitle className="mb-6 text-2xl font-bold text-foreground">AI Skin Analysis</DialogTitle>
+          <DialogTitle className="mb-6 text-2xl font-bold text-foreground">AI Hair Analysis</DialogTitle>
           <DialogDescription className="sr-only">
-            AI is analyzing your skin. Please wait while we process your image.
+            AI is analyzing your hair. Please wait while we process your image.
           </DialogDescription>
 
           {/* Captured image with scanning effect */}
-          <div className="relative mb-6 h-48 w-48 overflow-hidden rounded-full border-4 border-primary/40 shadow-[0_0_40px_rgba(0,255,200,0.3)]">
+          <div className="relative mb-6 h-48 w-48 overflow-hidden rounded-full border-4 border-primary/40 shadow-[0_0_40px_rgba(221,185,90,0.3)]">
             {capturedImage && (
               <img
                 src={capturedImage}
@@ -80,7 +80,7 @@ export function ScanLoader({ open, onOpenChange, capturedImage, onComplete }: Sc
               <div className="absolute inset-0 flex items-center justify-center bg-background/30">
                 <div className="h-full w-full animate-pulse bg-gradient-to-b from-primary/20 via-transparent to-primary/20" />
                 <div className="absolute inset-x-0 top-0 h-full overflow-hidden">
-                  <div className="animate-scan-slow absolute left-0 h-1 w-full bg-gradient-to-r from-transparent via-primary to-transparent shadow-[0_0_15px_rgba(0,255,200,0.8)]" />
+                  <div className="animate-scan-slow absolute left-0 h-1 w-full bg-gradient-to-r from-transparent via-primary to-transparent shadow-[0_0_15px_rgba(221,185,90,0.8)]" />
                 </div>
               </div>
             )}
@@ -88,7 +88,7 @@ export function ScanLoader({ open, onOpenChange, capturedImage, onComplete }: Sc
             {/* Complete checkmark */}
             {isComplete && (
               <div className="absolute inset-0 flex items-center justify-center bg-background/50">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary shadow-[0_0_30px_rgba(0,255,200,0.6)]">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary shadow-[0_0_30px_rgba(221,185,90,0.6)]">
                   <svg
                     className="h-8 w-8 text-primary-foreground"
                     fill="none"
@@ -116,7 +116,7 @@ export function ScanLoader({ open, onOpenChange, capturedImage, onComplete }: Sc
           {isComplete && (
             <Button
               onClick={onComplete}
-              className="mt-8 bg-primary px-8 py-6 text-lg font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_30px_rgba(0,255,200,0.5)]"
+              className="mt-8 bg-primary px-8 py-6 text-lg font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_30px_rgba(221,185,90,0.5)]"
             >
               See Your Results
             </Button>

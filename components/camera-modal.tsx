@@ -77,9 +77,9 @@ export function CameraModal({ open, onOpenChange, onCapture }: CameraModalProps)
         className="border-primary/20 bg-card/95 p-0 backdrop-blur-xl sm:max-w-lg"
       >
         <div className="relative flex flex-col items-center p-6">
-          <DialogTitle className="mb-4 text-xl font-bold text-foreground">Position Your Face</DialogTitle>
+          <DialogTitle className="mb-4 text-xl font-bold text-foreground">Position Your Hair</DialogTitle>
           <DialogDescription className="mb-4 text-center text-sm text-muted-foreground">
-            Align your face within the circle for optimal scanning
+            Align your hair within the circle for optimal scanning
           </DialogDescription>
 
           <div className="relative aspect-square w-full max-w-sm overflow-hidden rounded-2xl bg-background">
@@ -99,7 +99,7 @@ export function CameraModal({ open, onOpenChange, onCapture }: CameraModalProps)
 
                 {/* Face frame overlay */}
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                  <div className="relative h-64 w-64 rounded-full border-4 border-primary/60 shadow-[0_0_30px_rgba(0,255,200,0.3),inset_0_0_30px_rgba(0,255,200,0.1)]">
+                  <div className="relative h-64 w-64 rounded-full border-4 border-primary/60 shadow-[0_0_30px_rgba(221,185,90,0.3),inset_0_0_30px_rgba(221,185,90,0.1)]">
                     {/* Corner markers */}
                     <div className="absolute -left-1 -top-1 h-6 w-6 border-l-4 border-t-4 border-primary rounded-tl-full" />
                     <div className="absolute -right-1 -top-1 h-6 w-6 border-r-4 border-t-4 border-primary rounded-tr-full" />
@@ -111,7 +111,7 @@ export function CameraModal({ open, onOpenChange, onCapture }: CameraModalProps)
                 {/* Scanning line animation */}
                 {isStreaming && (
                   <div className="pointer-events-none absolute inset-x-0 top-0 h-full overflow-hidden">
-                    <div className="animate-scan absolute left-1/2 h-1 w-64 -translate-x-1/2 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 shadow-[0_0_20px_rgba(0,255,200,0.8)]" />
+                    <div className="animate-scan absolute left-1/2 h-1 w-64 -translate-x-1/2 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 shadow-[0_0_20px_rgba(221,185,90,0.8)]" />
                   </div>
                 )}
               </>
@@ -123,7 +123,7 @@ export function CameraModal({ open, onOpenChange, onCapture }: CameraModalProps)
           <Button
             onClick={handleCapture}
             disabled={!isStreaming}
-            className="mt-6 flex items-center gap-2 bg-primary px-8 py-6 text-lg font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_30px_rgba(0,255,200,0.5)] disabled:opacity-50"
+            className="mt-6 flex items-center gap-2 bg-primary px-8 py-6 text-lg font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_30px_rgba(221,185,90,0.5)] disabled:opacity-50"
           >
             <Camera className="h-5 w-5" />
             Capture
