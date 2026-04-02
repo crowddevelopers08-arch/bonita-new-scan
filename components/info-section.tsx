@@ -1,6 +1,9 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { Smartphone, FlaskConical, Leaf, Zap, Users, Award, MapPin, Phone, CalendarDays } from "lucide-react"
+
+const VideoCarousel = dynamic(() => import("./videosection"), { ssr: false })
 
 interface InfoSectionProps {
   onStartScan: () => void
@@ -17,6 +20,8 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
         .info-cta-card { padding: 36px 32px; }
         .info-cta-btns { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
         .info-cta-btn { width: auto; }
+        .info-side-images { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 0 auto 28px; maxWidth: 560px; }
+        .info-side-image { width: 100%; height: 180px; object-fit: cover; border-radius: 16px; border: 1px solid rgba(221,185,90,0.25); box-shadow: 0 6px 24px rgba(0,0,0,0.35); }
 
         @media (max-width: 1024px) {
           .info-grid-4 { grid-template-columns: repeat(2, 1fr); }
@@ -27,12 +32,16 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
           .info-grid-2 { grid-template-columns: 1fr; gap: 36px; }
           .info-grid-4 { grid-template-columns: repeat(2, 1fr); gap: 14px; }
           .info-cta-card { padding: 24px 16px; }
+          .info-side-images { maxWidth: 440px; }
+          .info-side-image { height: 150px; }
         }
         @media (max-width: 480px) {
           .info-section { padding: 20px 12px; }
           .info-grid-4 { grid-template-columns: 1fr 1fr; gap: 12px; }
           .info-cta-btns { flex-direction: column; align-items: stretch; }
           .info-cta-btn { justify-content: center; }
+          .info-side-images { grid-template-columns: 1fr; gap: 12px; max-width: 280px; }
+          .info-side-image { height: 140px; }
         }
       `}</style>
 
@@ -59,6 +68,19 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
             Trusted by 10,000+ Clients Across Tamil Nadu
           </div>
 
+          <div className="info-side-images">
+            <img
+              src="before4.webp"
+              alt="Hair scan left view"
+              className="info-side-image"
+            />
+            <img
+              src="before5.webp"
+              alt="Hair scan right view"
+              className="info-side-image"
+            />
+          </div>
+
           <h2 style={{ fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 800, lineHeight: 1.2, marginBottom: "20px", letterSpacing: "-0.02em" }}>
             Hair Fall Problems?{" "}
             <span style={{ background: "linear-gradient(90deg, #ddb95a, #f5e199)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
@@ -77,6 +99,7 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
       {/* ══ DIVIDER ══ */}
       <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, rgba(221,185,90,0.2), transparent)" }} />
 
+     <VideoCarousel />
       {/* ══════════════════════════════════
           SECTION 2 — 3 FEATURE CARDS
       ══════════════════════════════════ */}
