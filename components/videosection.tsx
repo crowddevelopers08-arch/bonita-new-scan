@@ -138,20 +138,14 @@ export default function VideoCarousel() {
             <Reveal dir="down" delay={0.0} className="mb-4">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full" style={{ border:"1px solid rgba(221,185,90,0.28)", background:"rgba(221,185,90,0.06)" }}>
                 <div className="w-2 h-2 rounded-full vc-glow-dot" style={{ background:"#ddb95a" }}/>
-                <span className="text-xs font-semibold tracking-widest" style={{ color:"#ddb95a" }}>REAL PEOPLE, REAL RESULTS</span>
+                <span className="text-xs font-semibold tracking-widest uppercase" style={{ color:"#ddb95a" }}>The Voice of Bonitaa Excellence</span>
               </div>
             </Reveal>
 
             <Reveal dir="up" delay={0.1}>
               <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:"clamp(1.7rem,3.5vw,3rem)", fontWeight:700, color:"rgba(240,232,213,0.92)", lineHeight:1.2 }}>
-                Real Journey<span style={{ color:"#ddb95a", fontStyle:"italic" }}>Of Bonita</span>
+                Real Journey <span style={{ color:"#ddb95a", fontStyle:"italic" }}>Of Bonita</span>
               </h2>
-            </Reveal>
-
-            <Reveal dir="up" delay={0.15} className="mt-3">
-              <p style={{ color:"rgba(240,232,213,0.4)", fontSize:"clamp(13px,1.3vw,15px)" }}>
-                Watch our patients' journeys — straight from our Instagram
-              </p>
             </Reveal>
 
             <Reveal dir="fade" delay={0.18} className="mt-5 flex items-center justify-center gap-3">

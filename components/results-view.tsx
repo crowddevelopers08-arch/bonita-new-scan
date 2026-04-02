@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { FileText, ArrowLeft, Download, CheckCircle2, Loader2 } from "lucide-react"
 import type { FormData } from "./form-modal"
 
@@ -17,167 +16,113 @@ interface ResultsViewProps {
 }
 
 const resultsData = {
-  acne: {
-    title: "Acne Treatment Plan",
+  "hair-fall": {
+    title: "Hair Fall Report",
     description:
-      "Based on our AI analysis, we've identified specific acne patterns on your hair and scalp. Here's your personalized treatment plan designed by hair care experts.",
+      "Based on our AI analysis, we have identified specific issues. Please download the PDF to learn about the solutions.",
     recommendations: [
-      "Daily cleansing with salicylic acid-based cleanser",
-      "Apply benzoyl peroxide spot treatment",
-      "Use oil-free, non-comedogenic moisturizer",
-      "Weekly clay mask for deep pore cleansing",
-      "Consider retinoid treatment (consult dermatologist)",
+      "PRP - Controls hair fall and strengthens roots",
+      "GFC - Improves regrowth and thickness",
+      "Mesotherapy - Nourishes scalp",
+      "OLT - Supports root strength",
+      "Combination treatment may be recommended",
     ],
-    docTitle: "Complete Acne Treatment Guide",
-    docDescription: "Detailed PDF guide with step-by-step hair care routine, product recommendations, and lifestyle tips.",
+    docTitle: "Hair Fall Report",
+    docDescription: "Detailed report with stage-wise plan and treatment recommendations for hair fall.",
   },
-  pigmentation: {
-    title: "Pigmentation Care Guide",
+  "crown-thinning": {
+    title: "Crown Thinning Report",
     description:
-      "Our AI detected uneven pigmentation affecting your scalp and hair. Here's your customized care plan to help restore healthy, even-toned hair.",
+      "Hair density is reducing at the crown area, often an early sign of pattern baldness.",
     recommendations: [
-      "Daily SPF 50+ broad-spectrum sunscreen",
-      "Vitamin C serum application (morning routine)",
-      "Niacinamide-based products for tone evening",
-      "Chemical exfoliation with AHA/BHA (2-3x weekly)",
-      "Consider professional treatments (consult specialist)",
+      "PRP - Activates weak follicles",
+      "GFC - Improves crown density",
+      "Mesotherapy - Strengthens scalp",
+      "Hair Transplant - For advanced stages",
     ],
-    docTitle: "Pigmentation Recovery Protocol",
-    docDescription: "Comprehensive guide covering causes, prevention, and advanced treatment options.",
+    docTitle: "Crown Thinning Report",
+    docDescription: "Stage-based restoration plan for crown thinning and pattern hair loss.",
   },
-  "hair-loss": {
-    title: "Hair Loss Recovery Plan",
+  "frontal-hair-loss": {
+    title: "Frontal Hair Loss Report",
     description:
-      "Based on our analysis of your scalp condition, we've created a personalized recovery plan to help promote healthier hair growth.",
+      "Hairline recession or thinning in the front area is noticed. This is often caused by genetics, stress, or hormonal changes.",
     recommendations: [
-      "Gentle, sulfate-free shampoo formula",
-      "Scalp massage routine (5 mins daily)",
-      "Biotin and zinc supplementation",
-      "Minoxidil application (as directed)",
-      "Balanced diet rich in proteins and vitamins",
+      "PRP - Slows hairline recession",
+      "GFC - Improves hair thickness",
+      "Mesotherapy - Nourishes follicles",
+      "Hair Transplant - Rebuilds hairline",
     ],
-    docTitle: "Hair Restoration Guide",
-    docDescription: "Expert guide on hair growth cycles, treatments, and maintenance routines.",
+    docTitle: "Frontal Hair Loss Report",
+    docDescription: "Focused plan to control recession and restore frontal hairline density.",
+  },
+  "dandruff-scalp-issues": {
+    title: "Dandruff / Scalp Issues Report",
+    description:
+      "Flaky scalp, itching, or irritation is affecting your hair health and growth.",
+    recommendations: [
+      "Anti-Dandruff Therapy - Clears scalp",
+      "OLT - Improves scalp health",
+      "Mesotherapy - Nourishes roots",
+      "Healthy scalp = Better hair growth",
+    ],
+    docTitle: "Dandruff / Scalp Issues Report",
+    docDescription: "Scalp-focused report with therapy suggestions and stage-wise care guidance.",
+  },
+  "low-hair-density": {
+    title: "Low Hair Density Report",
+    description:
+      "Hair appears thin, flat, and lacks volume due to weak or inactive follicles.",
+    recommendations: [
+      "GFC - Boosts density",
+      "PRP - Strengthens follicles",
+      "Mesotherapy - Improves nourishment",
+      "Hair Transplant - For advanced thinning",
+    ],
+    docTitle: "Low Hair Density Report",
+    docDescription: "Comprehensive density restoration report with treatment path by stage.",
   },
 }
 
-async function downloadPDF(problem: string, name: string, docTitle: string) {
-  // Fetch guide content from API
-  const res = await fetch(`/api/download-guide?problem=${problem}`)
-  if (!res.ok) throw new Error("Failed to fetch guide")
-  const guide = await res.json()
-
-  // Dynamically import jsPDF (avoids SSR issues)
-  const { jsPDF } = await import("jspdf")
-
-  const doc = new jsPDF({ unit: "pt", format: "a4" })
-  const pageW = doc.internal.pageSize.getWidth()
-  const pageH = doc.internal.pageSize.getHeight()
-  const margin = 50
-  const contentW = pageW - margin * 2
-
-  // ── Colours ──
-  const teal: [number, number, number] = [221, 185, 90]
-  const dark: [number, number, number] = [8, 11, 18]
-  const muted: [number, number, number] = [138, 138, 138]
-  const lightBg: [number, number, number] = [22, 27, 38]
-
-  // ── Header ──
-  doc.setTextColor(...teal)
-  doc.setFont("helvetica", "bold")
-  doc.setFontSize(20)
-  doc.text(guide.title, margin, 38)
-
-  doc.setTextColor(...muted)
-  doc.setFont("helvetica", "normal")
-  doc.setFontSize(11)
-  doc.text(guide.subtitle, margin, 58)
-
-  doc.setTextColor(...teal)
-  doc.setFontSize(9)
-  const date = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
-  doc.text(`Prepared for: ${name}`, margin, 76)
-  doc.text(`Date: ${date}`, pageW - margin, 76, { align: "right" })
-
-  // thin gold divider line under header
-  doc.setDrawColor(...teal)
-  doc.setLineWidth(0.5)
-  doc.line(margin, 88, pageW - margin, 88)
-
-  let y = 104
-
-  // ── Sections ──
-  for (const section of guide.sections) {
-    // Check if we need a new page (leave room for heading + at least one line)
-    if (y + 60 > pageH - margin) {
-      doc.addPage()
-      y = margin
-    }
-
-    doc.setTextColor(...teal)
-    doc.setFont("helvetica", "bold")
-    doc.setFontSize(11)
-    doc.text(section.heading, margin, y + 15)
-
-    y += 28
-
-    doc.setTextColor(...dark)
-    doc.setFont("helvetica", "normal")
-    doc.setFontSize(10)
-
-    for (const item of section.items) {
-      const lines = doc.splitTextToSize(`  ${item}`, contentW - 10)
-      if (y + lines.length * 14 > pageH - margin) {
-        doc.addPage()
-        y = margin
-      }
-      doc.text(lines, margin + 8, y)
-      y += lines.length * 14 + 2
-    }
-
-    y += 10
-  }
-
-  // ── Divider ──
-  if (y + 30 > pageH - margin) {
-    doc.addPage()
-    y = margin
-  }
-  doc.setDrawColor(...teal)
-  doc.setLineWidth(0.5)
-  doc.line(margin, y, pageW - margin, y)
-  y += 10
-
-  // ── Disclaimer ──
-  doc.setTextColor(...muted)
-  doc.setFont("helvetica", "italic")
-  doc.setFontSize(8)
-  const disclaimerLines = doc.splitTextToSize(`Disclaimer: ${guide.disclaimer}`, contentW)
-  doc.text(disclaimerLines, margin, y)
-
-  // ── Save ──
-  const filename = `${docTitle.replace(/\s+/g, "_")}.pdf`
-  doc.save(filename)
+const pdfByProblem: Record<keyof typeof resultsData, string> = {
+  "hair-fall": "/Hair-Fall-Report.pdf",
+  "crown-thinning": "/Crown-Thinning-Report.pdf",
+  "frontal-hair-loss": "/Frontal-Hair-Loss-Report.pdf",
+  "dandruff-scalp-issues": "/Dandruff-Scalp-Issues-Report.pdf",
+  "low-hair-density": "/Lower-Hair-Density-Report.pdf",
 }
 
+async function downloadFromPublic(pdfPath: string, fileName: string) {
+  const check = await fetch(pdfPath, { method: "HEAD" })
+  if (!check.ok) {
+    throw new Error(`PDF not found at ${pdfPath}`)
+  }
+
+  const link = document.createElement("a")
+  link.href = pdfPath
+  link.download = fileName
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
 export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProps) {
   const [pdfFormOpen, setPdfFormOpen] = useState(false)
   const [pdfGenerating, setPdfGenerating] = useState(false)
-  const [pdfForm, setPdfForm] = useState({ name: formData.name || "", phone: formData.phone || "", problem: formData.problem || "" })
+  const [pdfForm, setPdfForm] = useState({ name: formData.name || "", phone: formData.phone || "" })
 
-  const problem = (formData.problem || "acne") as keyof typeof resultsData
+  const problem = (formData.problem || "hair-fall") as keyof typeof resultsData
   const data = resultsData[problem]
 
   if (!data) return null
 
   const handleDownload = () => {
-    setPdfForm({ name: formData.name || "", phone: formData.phone || "", problem: formData.problem || "" })
+    setPdfForm({ name: formData.name || "", phone: formData.phone || "" })
     setPdfFormOpen(true)
   }
 
   const handlePdfFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!pdfForm.name.trim() || !pdfForm.problem) return
+    if (!pdfForm.name.trim() || !pdfForm.phone.trim()) return
     setPdfGenerating(true)
     try {
       await fetch("/api/save-scan", {
@@ -186,15 +131,18 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
         body: JSON.stringify({
           name: pdfForm.name,
           phone: pdfForm.phone,
-          problem: pdfForm.problem,
+          problem,
           imageData: capturedImage ?? "",
         }),
       }).catch((err) => console.error("Failed to save scan:", err))
-      const selectedData = resultsData[pdfForm.problem as keyof typeof resultsData]
-      await downloadPDF(pdfForm.problem, pdfForm.name, selectedData.docTitle)
+      const fileName = `${data.docTitle.replace(/\s+/g, "_")}.pdf`
+      await downloadFromPublic(pdfByProblem[problem], fileName)
       setPdfFormOpen(false)
     } catch (err) {
       console.error("PDF generation failed:", err)
+      if (err instanceof Error && err.message.includes("PDF not found")) {
+        alert(err.message)
+      }
     } finally {
       setPdfGenerating(false)
     }
@@ -280,37 +228,9 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
           boxShadow: "0 4px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(221,185,90,0.07)"
         }}>
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(90deg, transparent, #ddb95a, transparent)" }} />
-          <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#ddb95a", marginBottom: "10px" }}>Analysis Summary</p>
+          <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#ddb95a", marginBottom: "10px" }}>your AI Scan Report is Ready
+</p>
           <p style={{ lineHeight: 1.8, color: "#9a9a9a", fontSize: "0.95rem" }}>{data.description}</p>
-        </div>
-
-        {/* ── Recommendations ── */}
-        <div style={{
-          background: "linear-gradient(145deg, #0e1118, #0a0d15)",
-          border: "1px solid rgba(221,185,90,0.2)",
-          borderRadius: "18px", padding: "28px",
-          marginBottom: "20px", position: "relative", overflow: "hidden",
-          boxShadow: "0 4px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(221,185,90,0.07)"
-        }}>
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(90deg, transparent, #ddb95a, transparent)" }} />
-          <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#ddb95a", marginBottom: "6px" }}>Recommended Actions</p>
-          <p style={{ fontSize: "0.82rem", color: "#8a8a8a", marginBottom: "20px" }}>Follow these steps for optimal results</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            {data.recommendations.map((rec, index) => (
-              <div key={index} style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
-                <div style={{
-                  width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-                  border: "1px solid rgba(221,185,90,0.35)",
-                  background: "rgba(221,185,90,0.1)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "0.75rem", fontWeight: 700, color: "#ddb95a"
-                }}>
-                  {index + 1}
-                </div>
-                <p style={{ lineHeight: 1.7, color: "#c8c4bc", fontSize: "0.93rem", paddingTop: "4px" }}>{rec}</p>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* ── PDF Download card ── */}
@@ -392,7 +312,7 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
           <DialogHeader>
             <DialogTitle className="text-center text-xl font-bold text-foreground">Download Your Guide</DialogTitle>
             <DialogDescription className="text-center text-sm text-muted-foreground">
-              {pdfGenerating ? "Generating your PDF, please wait…" : "Enter your details to generate the PDF"}
+              {pdfGenerating ? "Generating your PDF, please wait…" : "Enter your name and phone number to generate the PDF"}
             </DialogDescription>
           </DialogHeader>
 
@@ -424,25 +344,9 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
                   className="border-border/50 bg-background/50 focus:border-primary focus:ring-primary"
                 />
               </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="pdf-problem" className="text-foreground">Hair Concern</Label>
-                <Select
-                  value={pdfForm.problem}
-                  onValueChange={(value) => setPdfForm({ ...pdfForm, problem: value })}
-                >
-                  <SelectTrigger className="border-border/50 bg-background/50 focus:border-primary focus:ring-primary">
-                    <SelectValue placeholder="Choose a hair concern" />
-                  </SelectTrigger>
-                  <SelectContent className="border-border bg-card">
-                    <SelectItem value="acne">Acne</SelectItem>
-                    <SelectItem value="pigmentation">Pigmentation</SelectItem>
-                    <SelectItem value="hair-loss">Hair Loss</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
               <Button
                 type="submit"
-                disabled={!pdfForm.name.trim() || !pdfForm.problem}
+                disabled={!pdfForm.name.trim() || !pdfForm.phone.trim()}
                 className="mt-2 w-full bg-primary text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_20px_rgba(221,185,90,0.4)] disabled:opacity-50"
               >
                 <Download className="mr-2 h-4 w-4" />
@@ -455,3 +359,4 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
     </div>
   )
 }
+

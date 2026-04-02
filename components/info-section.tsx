@@ -65,7 +65,7 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
             marginBottom: "28px", boxShadow: "0 0 20px rgba(221,185,90,0.1)"
           }}>
             <Award style={{ width: 14, height: 14 }} />
-            Trusted by 10,000+ Clients Across Tamil Nadu
+            Trusted by  50k+ Clients Across Tamil Nadu
           </div>
 
           <div className="info-side-images">

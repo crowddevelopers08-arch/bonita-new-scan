@@ -1,13 +1,42 @@
 "use client"
 
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Phone, Scan, Sparkles, Shield, Zap } from "lucide-react"
+import type { FormData } from "./form-modal"
 
 interface HeroSectionProps {
-  onStartScan: () => void
+  onStartScan: (data: FormData) => void
 }
 
 export function HeroSection({ onStartScan }: HeroSectionProps) {
+  const [showForm, setShowForm] = useState(false)
+  const [problem, setProblem] = useState<FormData["problem"]>("")
+  const [error, setError] = useState("")
+
+  const validate = () => {
+    if (!problem) {
+      setError("Please select a concern")
+      return false
+    }
+    setError("")
+    return true
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!validate()) return
+    onStartScan({
+      name: "",
+      phone: "",
+      problem,
+    })
+    setShowForm(false)
+  }
+
   return (
     <section className="relative flex max-sm:py-5 md:py-15 flex-col items-center justify-center overflow-hidden bg-background px-4">
       {/* Animated background effects */}
@@ -57,13 +86,13 @@ export function HeroSection({ onStartScan }: HeroSectionProps) {
 
         {/* Subheading */}
         <p className="mb-10 max-sm:mb-4 max-w-xl text-pretty text-lg text-muted-foreground md:text-xl">
-          Providing FDA-approved treatments, with 15+ years of experience and over 10,000 happy clients. Trusted across 22+ clinics in Tamil Nadu!
+          Providing FDA-approved treatments, with 15+ years of experience and over 50,000 happy clients. Trusted across 22+ clinics in Tamil Nadu!
         </p>
 
         {/* CTA Buttons */}
         <div className="flex items-center gap-4 sm:flex-row">
           <Button
-            onClick={onStartScan}
+            onClick={() => setShowForm(true)}
             size="lg"
             className="group relative flex items-center gap-3 bg-primary px-8 py-7 text-lg font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_40px_rgba(221,185,90,0.5)]"
           >
@@ -102,6 +131,49 @@ export function HeroSection({ onStartScan }: HeroSectionProps) {
 
       {/* Bottom gradient fade */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
+
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent className="border-primary/20 bg-card/95 backdrop-blur-xl sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-2xl font-bold text-foreground">
+              Start Your Hair Analysis
+            </DialogTitle>
+            <DialogDescription className="text-center text-sm text-muted-foreground">
+              Select your concern to continue to camera scan
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-5">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="hero-problem" className="text-foreground">
+                Select Your Concern
+              </Label>
+              <Select
+                value={problem}
+                onValueChange={(value: "hair-fall" | "crown-thinning" | "frontal-hair-loss" | "dandruff-scalp-issues" | "low-hair-density") => setProblem(value)}
+              >
+                <SelectTrigger id="hero-problem" className="border-border/50 bg-background/50 focus:border-primary focus:ring-primary">
+                  <SelectValue placeholder="Choose a hair concern" />
+                </SelectTrigger>
+                <SelectContent className="border-border bg-card">
+                  <SelectItem value="hair-fall">Hair Fall</SelectItem>
+                  <SelectItem value="crown-thinning">Crown Thinning</SelectItem>
+                  <SelectItem value="frontal-hair-loss">Frontal Hair Loss</SelectItem>
+                  <SelectItem value="dandruff-scalp-issues">Dandruff / Scalp Issues</SelectItem>
+                  <SelectItem value="low-hair-density">Low Hair Density</SelectItem>
+                </SelectContent>
+              </Select>
+              {error && <p className="text-sm text-destructive">{error}</p>}
+            </div>
+
+            <Button
+              type="submit"
+              className="mt-2 w-full bg-primary text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_20px_rgba(221,185,90,0.4)]"
+            >
+              Continue
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </section>
   )
 }

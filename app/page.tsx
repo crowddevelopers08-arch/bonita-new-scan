@@ -4,7 +4,7 @@ import { useState } from "react"
 import dynamic from "next/dynamic"
 import { HeroSection } from "@/components/hero-section"
 import { InfoSection } from "@/components/info-section"
-import { FormModal, type FormData } from "@/components/form-modal"
+import type { FormData } from "@/components/form-modal"
 import { CameraModal } from "@/components/camera-modal"
 import { ScanLoader } from "@/components/scan-loader"
 
@@ -23,6 +23,11 @@ export default function Home() {
     problem: "",
   })
   const [capturedImage, setCapturedImage] = useState<string | null>(null)
+
+  const handleStartScanFromHero = (data: FormData) => {
+    setFormData(data)
+    setAppState("camera")
+  }
 
   const handleStartScan = () => {
     setAppState("camera")
@@ -49,7 +54,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-background">
-      <HeroSection onStartScan={handleStartScan} />
+      <HeroSection onStartScan={handleStartScanFromHero} />
       <InfoSection onStartScan={handleStartScan} />
 
       <CameraModal

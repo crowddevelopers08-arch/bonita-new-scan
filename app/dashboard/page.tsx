@@ -2,9 +2,11 @@ import { prisma } from "@/lib/prisma"
 import Image from "next/image"
 
 const problemLabels: Record<string, string> = {
-  acne: "Acne",
-  pigmentation: "Pigmentation",
-  "hair-loss": "Hair Loss",
+  "hair-fall": "Hair Fall",
+  "crown-thinning": "Crown Thinning",
+  "frontal-hair-loss": "Frontal Hair Loss",
+  "dandruff-scalp-issues": "Dandruff / Scalp Issues",
+  "low-hair-density": "Low Hair Density",
 }
 
 export default async function DashboardPage() {

@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export type FormData = {
   name: string
   phone: string
-  problem: "acne" | "pigmentation" | "hair-loss" | ""
+  problem: "hair-fall" | "crown-thinning" | "frontal-hair-loss" | "dandruff-scalp-issues" | "low-hair-density" | ""
 }
 
 interface FormModalProps {
@@ -104,7 +104,7 @@ export function FormModal({ open, onOpenChange, onSubmit }: FormModalProps) {
             </Label>
             <Select
               value={formData.problem}
-              onValueChange={(value: "acne" | "pigmentation" | "hair-loss") =>
+              onValueChange={(value: "hair-fall" | "crown-thinning" | "frontal-hair-loss" | "dandruff-scalp-issues" | "low-hair-density") =>
                 setFormData({ ...formData, problem: value })
               }
             >
@@ -112,9 +112,11 @@ export function FormModal({ open, onOpenChange, onSubmit }: FormModalProps) {
                 <SelectValue placeholder="Choose a hair concern" />
               </SelectTrigger>
               <SelectContent className="border-border bg-card">
-                <SelectItem value="acne">Acne</SelectItem>
-                <SelectItem value="pigmentation">Pigmentation</SelectItem>
-                <SelectItem value="hair-loss">Hair Loss</SelectItem>
+                <SelectItem value="hair-fall">Hair Fall</SelectItem>
+                <SelectItem value="crown-thinning">Crown Thinning</SelectItem>
+                <SelectItem value="frontal-hair-loss">Frontal Hair Loss</SelectItem>
+                <SelectItem value="dandruff-scalp-issues">Dandruff / Scalp Issues</SelectItem>
+                <SelectItem value="low-hair-density">Low Hair Density</SelectItem>
               </SelectContent>
             </Select>
             {errors.problem && <p className="text-sm text-destructive">{errors.problem}</p>}
