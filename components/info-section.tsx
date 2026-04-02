@@ -106,7 +106,6 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
       <section className="info-section" style={{ position: "relative" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
 
-          {/* heading */}
           <div style={{ textAlign: "center", marginBottom: "52px" }}>
             <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#ddb95a", marginBottom: "10px" }}>How It Works</p>
             <h2 style={{ fontSize: "clamp(1.7rem, 4vw, 2.6rem)", fontWeight: 800, letterSpacing: "-0.02em" }}>Three Steps to Healthier Hair</h2>
