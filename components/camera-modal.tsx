@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Camera } from "lucide-react"
+import { Camera, RotateCcw, FlipHorizontal } from "lucide-react"
 
 interface CameraModalProps {
   open: boolean
@@ -17,12 +17,18 @@ export function CameraModal({ open, onOpenChange, onCapture }: CameraModalProps)
   const streamRef = useRef<MediaStream | null>(null)
   const [isStreaming, setIsStreaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user")
+  const [capturedImage, setCapturedImage] = useState<string | null>(null)
 
-  const startCamera = useCallback(async () => {
+  const startCamera = useCallback(async (mode: "user" | "environment") => {
     try {
       setError(null)
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop())
+        streamRef.current = null
+      }
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: 640, height: 480 },
+        video: { facingMode: mode, width: 640, height: 480 },
       })
       streamRef.current = stream
       if (videoRef.current) {
@@ -47,12 +53,14 @@ export function CameraModal({ open, onOpenChange, onCapture }: CameraModalProps)
 
   useEffect(() => {
     if (open) {
-      startCamera()
+      setCapturedImage(null)
+      startCamera(facingMode)
     } else {
       stopCamera()
+      setCapturedImage(null)
     }
     return () => stopCamera()
-  }, [open, startCamera, stopCamera])
+  }, [open])
 
   const handleCapture = () => {
     if (videoRef.current && canvasRef.current) {
@@ -65,9 +73,24 @@ export function CameraModal({ open, onOpenChange, onCapture }: CameraModalProps)
         ctx.drawImage(video, 0, 0)
         const imageData = canvas.toDataURL("image/jpeg", 0.8)
         stopCamera()
-        onCapture(imageData)
+        setCapturedImage(imageData)
       }
     }
+  }
+
+  const handleRetake = () => {
+    setCapturedImage(null)
+    startCamera(facingMode)
+  }
+
+  const handleFlipCamera = () => {
+    const newMode = facingMode === "user" ? "environment" : "user"
+    setFacingMode(newMode)
+    startCamera(newMode)
+  }
+
+  const handleConfirm = () => {
+    if (capturedImage) onCapture(capturedImage)
   }
 
   return (
@@ -79,7 +102,7 @@ export function CameraModal({ open, onOpenChange, onCapture }: CameraModalProps)
         <div className="relative flex flex-col items-center p-6">
           <DialogTitle className="mb-4 text-xl font-bold text-foreground">Position Your Hair</DialogTitle>
           <DialogDescription className="mb-4 text-center text-sm text-muted-foreground">
-            Align your hair within the circle for optimal scanning
+            {capturedImage ? "Happy with the photo? Confirm or retake." : "Align your hair within the circle for optimal scanning"}
           </DialogDescription>
 
           <div className="relative aspect-square w-full max-w-sm overflow-hidden rounded-2xl bg-background">
@@ -87,6 +110,9 @@ export function CameraModal({ open, onOpenChange, onCapture }: CameraModalProps)
               <div className="flex h-full items-center justify-center p-4 text-center text-destructive">
                 {error}
               </div>
+            ) : capturedImage ? (
+              /* Preview captured image */
+              <img src={capturedImage} alt="Captured" className="h-full w-full object-cover" />
             ) : (
               <>
                 <video
@@ -100,7 +126,6 @@ export function CameraModal({ open, onOpenChange, onCapture }: CameraModalProps)
                 {/* Face frame overlay */}
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                   <div className="relative h-64 w-64 rounded-full border-4 border-primary/60 shadow-[0_0_30px_rgba(221,185,90,0.3),inset_0_0_30px_rgba(221,185,90,0.1)]">
-                    {/* Corner markers */}
                     <div className="absolute -left-1 -top-1 h-6 w-6 border-l-4 border-t-4 border-primary rounded-tl-full" />
                     <div className="absolute -right-1 -top-1 h-6 w-6 border-r-4 border-t-4 border-primary rounded-tr-full" />
                     <div className="absolute -bottom-1 -left-1 h-6 w-6 border-b-4 border-l-4 border-primary rounded-bl-full" />
@@ -114,20 +139,50 @@ export function CameraModal({ open, onOpenChange, onCapture }: CameraModalProps)
                     <div className="animate-scan absolute left-1/2 h-1 w-64 -translate-x-1/2 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 shadow-[0_0_20px_rgba(221,185,90,0.8)]" />
                   </div>
                 )}
+
+                {/* Flip camera button */}
+                <button
+                  onClick={handleFlipCamera}
+                  className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full border border-primary/30 bg-background/70 text-primary backdrop-blur-sm transition-all hover:border-primary hover:bg-primary/10"
+                >
+                  <FlipHorizontal className="h-5 w-5" />
+                </button>
               </>
             )}
           </div>
 
           <canvas ref={canvasRef} className="hidden" />
 
-          <Button
-            onClick={handleCapture}
-            disabled={!isStreaming}
-            className="mt-6 flex items-center gap-2 bg-primary px-8 py-6 text-lg font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_30px_rgba(221,185,90,0.5)] disabled:opacity-50"
-          >
-            <Camera className="h-5 w-5" />
-            Capture
-          </Button>
+          {capturedImage ? (
+            /* Retake + Confirm buttons */
+            <div className="mt-6 flex w-full gap-3">
+              <Button
+                onClick={handleRetake}
+                variant="outline"
+                className="flex-1 flex items-center gap-2 border-primary/40 text-primary hover:bg-primary/10 py-6 text-base font-semibold"
+              >
+                <RotateCcw className="h-5 w-5" />
+                Retake
+              </Button>
+              <Button
+                onClick={handleConfirm}
+                className="flex-1 flex items-center gap-2 bg-primary py-6 text-base font-semibold text-primary-foreground hover:bg-primary/90 hover:shadow-[0_0_30px_rgba(221,185,90,0.5)]"
+              >
+                <Camera className="h-5 w-5" />
+                Confirm
+              </Button>
+            </div>
+          ) : (
+            /* Capture button */
+            <Button
+              onClick={handleCapture}
+              disabled={!isStreaming}
+              className="mt-6 flex items-center gap-2 bg-primary px-8 py-6 text-lg font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_30px_rgba(221,185,90,0.5)] disabled:opacity-50"
+            >
+              <Camera className="h-5 w-5" />
+              Capture
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
