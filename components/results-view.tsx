@@ -125,7 +125,7 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
     if (!pdfForm.name.trim() || !pdfForm.phone.trim()) return
     setPdfGenerating(true)
     try {
-      await fetch("/api/save-scan", {
+      const saveRes = await fetch("/api/save-scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -134,12 +134,20 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
           problem,
           imageData: capturedImage ?? "",
         }),
-      }).catch((err) => console.error("Failed to save scan:", err))
+      })
+      if (!saveRes.ok) {
+        const payload = await saveRes.json().catch(() => ({ error: "Failed to save scan" }))
+        throw new Error(payload?.error || "Failed to save scan")
+      }
+
       const fileName = `${data.docTitle.replace(/\s+/g, "_")}.pdf`
       await downloadFromPublic(pdfByProblem[problem], fileName)
       setPdfFormOpen(false)
     } catch (err) {
-      console.error("PDF generation failed:", err)
+      console.error("Submit/download failed:", err)
+      if (err instanceof Error && err.message.includes("Failed to save scan")) {
+        alert(`Database save failed: ${err.message}`)
+      }
       if (err instanceof Error && err.message.includes("PDF not found")) {
         alert(err.message)
       }

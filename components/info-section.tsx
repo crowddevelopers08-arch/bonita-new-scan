@@ -238,7 +238,7 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
           <div className="info-grid-4">
             {[
               { icon: <Award style={{ width: 32, height: 32, color: "#ddb95a" }} />, stat: "FDA Approved", sub: "Treatments", desc: "Only FDA-approved technologies for safe, effective hair restoration." },
-              { icon: <Users style={{ width: 32, height: 32, color: "#ddb95a" }} />, stat: "10,000+", sub: "Happy Clients", desc: "Clients who have experienced life-changing hair restoration." },
+              { icon: <Users style={{ width: 32, height: 32, color: "#ddb95a" }} />, stat: "50,000", sub: "Happy Clients", desc: "Clients who have experienced life-changing hair restoration." },
               { icon: <Zap style={{ width: 32, height: 32, color: "#ddb95a" }} />, stat: "15+ Years", sub: "of Experience", desc: "Tailored treatments specifically for Indian hair needs." },
               { icon: <MapPin style={{ width: 32, height: 32, color: "#ddb95a" }} />, stat: "22+ Clinics", sub: "Tamil Nadu", desc: "Trusted services easily accessible near you." },
             ].map((item, i) => (

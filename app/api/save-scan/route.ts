@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
+export const runtime = "nodejs"
+
 export async function POST(req: NextRequest) {
   try {
     const { name, phone, problem, imageData } = await req.json()
@@ -16,6 +18,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, id: scan.id })
   } catch (error) {
     console.error("Failed to save scan:", error)
-    return NextResponse.json({ error: "Failed to save scan" }, { status: 500 })
+    const message =
+      error instanceof Error && process.env.NODE_ENV !== "production"
+        ? `Failed to save scan: ${error.message}`
+        : "Failed to save scan"
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
