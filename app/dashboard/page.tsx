@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma"
 import Image from "next/image"
 
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 const problemLabels: Record<string, string> = {
   "hair-fall": "Hair Fall",
   "crown-thinning": "Crown Thinning",
