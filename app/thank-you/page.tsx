@@ -1,5 +1,15 @@
+import Script from "next/script"
+
 export default function ThankYouPage() {
   return (
+    <>
+      <Script id="meta-pixel-submit-application" strategy="afterInteractive">
+        {`
+          if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
+            window.fbq('track', 'SubmitApplication');
+          }
+        `}
+      </Script>
     <main
       style={{
         minHeight: "100vh",
@@ -51,5 +61,6 @@ export default function ThankYouPage() {
         </p>
       </div>
     </main>
+    </>
   )
 }
