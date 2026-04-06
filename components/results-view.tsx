@@ -93,17 +93,20 @@ const pdfByProblem: Record<keyof typeof resultsData, string> = {
 }
 
 async function downloadFromPublic(pdfPath: string, fileName: string) {
-  const check = await fetch(pdfPath, { method: "HEAD" })
-  if (!check.ok) {
+  const response = await fetch(pdfPath)
+  if (!response.ok) {
     throw new Error(`PDF not found at ${pdfPath}`)
   }
 
+  const blob = await response.blob()
+  const blobUrl = window.URL.createObjectURL(blob)
   const link = document.createElement("a")
-  link.href = pdfPath
+  link.href = blobUrl
   link.download = fileName
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
+  window.URL.revokeObjectURL(blobUrl)
 }
 export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProps) {
   const [pdfFormOpen, setPdfFormOpen] = useState(false)
@@ -143,6 +146,7 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
       const fileName = `${data.docTitle.replace(/\s+/g, "_")}.pdf`
       await downloadFromPublic(pdfByProblem[problem], fileName)
       setPdfFormOpen(false)
+      window.location.assign("/thank-you")
     } catch (err) {
       console.error("Submit/download failed:", err)
       if (err instanceof Error && err.message.includes("Failed to save scan")) {
