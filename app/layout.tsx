@@ -12,21 +12,8 @@ export const metadata: Metadata = {
   description: 'Get instant AI-powered skin analysis. Detect acne, pigmentation, and hair loss with our advanced face scanning technology.',
   generator: 'v0.app',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: '/logo-1.png',
+    apple: '/logo-1.png',
   },
 }
 
