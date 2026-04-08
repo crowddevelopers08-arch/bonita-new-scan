@@ -2,17 +2,24 @@
 import { useState, useEffect, useRef } from "react";
 import { Reveal } from "./animation";
 
-const reels = [
-  { id: "DU8PMo6Ejxc" },
-  // { id: "DUc9jInkunK" },
-  { id: "DQ0nEDHEnxf" },
-  { id: "DQRbNR1knbS" },
-  { id: "C6Bg2Fvu3IZ" },
-  // { id: "Cs0emrChyEP" },
-  { id: "CrLCbUsMPcv" },
+const defaultReels = [
+  { id: "DV8yZqREhRL", type: "reel" as const },
+  { id: "DVbNAaKjEMv", type: "reel" as const },
+  { id: "DVRDCC-Ep8c", type: "reel" as const },
+  { id: "DVGnHLtEkDs", type: "reel" as const },
+  { id: "DTpRjmfklOc", type: "reel" as const },
 ];
 
-export default function VideoCarousel() {
+type ReelItem = {
+  id: string;
+  type?: "p" | "reel";
+};
+
+interface VideoCarouselProps {
+  reels?: ReelItem[];
+}
+
+export default function VideoCarousel({ reels = defaultReels }: VideoCarouselProps) {
   const [current, setCurrent] = useState(0);
   const [perView, setPerView] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -52,7 +59,9 @@ export default function VideoCarousel() {
     autoRef.current = setInterval(() => {
       setCurrent((prev) => (prev >= maxIndex ? 0 : prev + 1));
     }, 5000);
-    return () => { if (autoRef.current) clearInterval(autoRef.current); };
+    return () => {
+      if (autoRef.current) clearInterval(autoRef.current);
+    };
   }, [maxIndex]);
 
   const onTouchStart = (e: React.TouchEvent) => {
@@ -113,7 +122,6 @@ export default function VideoCarousel() {
           opacity: 0.3;
         }
 
-        /* Instagram iframe reset */
         .vc-iframe-wrap iframe {
           border: none !important;
           border-radius: 0 !important;
@@ -125,15 +133,12 @@ export default function VideoCarousel() {
         className="relative w-full overflow-hidden"
         style={{ background: "#080b12", fontFamily: "'Outfit',sans-serif" }}
       >
-        {/* Ambient orbs */}
         <div className="absolute pointer-events-none z-0" style={{ width:"clamp(300px,38vw,500px)", height:"clamp(300px,38vw,500px)", top:"-10%", left:"-5%", background:"radial-gradient(circle,rgba(221,185,90,0.08) 0%,transparent 70%)", filter:"blur(90px)", borderRadius:"50%" }}/>
         <div className="absolute pointer-events-none z-0" style={{ width:"clamp(220px,28vw,380px)", height:"clamp(220px,28vw,380px)", bottom:"-8%", right:"3%", background:"radial-gradient(circle,rgba(221,185,90,0.07) 0%,transparent 70%)", filter:"blur(70px)", borderRadius:"50%" }}/>
 
         <div className="w-full h-px" style={{ background:"linear-gradient(90deg,transparent,#ddb95a,transparent)" }}/>
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-14">
-
-          {/* ── Heading ── */}
           <div className="text-center mb-12 max-sm:mb-8">
             <Reveal dir="down" delay={0.0} className="mb-4">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full" style={{ border:"1px solid rgba(221,185,90,0.28)", background:"rgba(221,185,90,0.06)" }}>
@@ -155,7 +160,6 @@ export default function VideoCarousel() {
             </Reveal>
           </div>
 
-          {/* ── Carousel ── */}
           <Reveal dir="up" delay={0.22} className="w-full overflow-hidden">
             <div
               className="vc-track flex"
@@ -169,7 +173,6 @@ export default function VideoCarousel() {
                   className="flex-shrink-0"
                   style={{ width: `calc((100% - ${(perView - 1) * 16}px) / ${perView})` }}
                 >
-                  {/* Portrait card — 9:16 */}
                   <div
                     className="vc-card relative rounded-2xl overflow-hidden"
                     style={{
@@ -179,13 +182,11 @@ export default function VideoCarousel() {
                       background: "#0d0f18",
                     }}
                   >
-                    {/* Shimmer while iframe loads */}
                     <div className="vc-skeleton absolute inset-0 z-[1]"/>
 
-                    {/* Instagram embed iframe */}
                     <div className="vc-iframe-wrap absolute inset-0 z-[2]">
                       <iframe
-                        src={`https://www.instagram.com/p/${reel.id}/embed/`}
+                        src={`https://www.instagram.com/${reel.type ?? "p"}/${reel.id}/embed/`}
                         width="100%"
                         height="100%"
                         loading="lazy"
@@ -200,7 +201,6 @@ export default function VideoCarousel() {
                       />
                     </div>
 
-                    {/* Gold corner accent */}
                     <div className="absolute top-0 left-0 z-[3] pointer-events-none" style={{ width:40, height:40, borderTop:"2px solid rgba(221,185,90,0.45)", borderLeft:"2px solid rgba(221,185,90,0.45)", borderTopLeftRadius:14 }}/>
                     <div className="absolute bottom-0 right-0 z-[3] pointer-events-none" style={{ width:40, height:40, borderBottom:"2px solid rgba(221,185,90,0.45)", borderRight:"2px solid rgba(221,185,90,0.45)", borderBottomRightRadius:14 }}/>
                   </div>
@@ -209,7 +209,6 @@ export default function VideoCarousel() {
             </div>
           </Reveal>
 
-          {/* ── Dots ── */}
           <div className="flex items-center justify-center gap-2.5 mt-10">
             {Array.from({ length: maxIndex + 1 }).map((_, i) => (
               <button
@@ -229,7 +228,6 @@ export default function VideoCarousel() {
             ))}
           </div>
 
-          {/* ── Arrows ── */}
           <div className="hidden sm:flex items-center justify-center gap-4 mt-6">
             <button
               className="vc-arrow flex items-center justify-center w-10 h-10 rounded-full"

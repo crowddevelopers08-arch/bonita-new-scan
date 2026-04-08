@@ -5,6 +5,14 @@ import { Smartphone, FlaskConical, Leaf, Zap, Users, Award, MapPin, Phone, Calen
 
 const VideoCarousel = dynamic(() => import("./videosection"), { ssr: false })
 
+const hairReels = [
+  { id: "DU8PMo6Ejxc" },
+  { id: "DQ0nEDHEnxf" },
+  { id: "DQRbNR1knbS" },
+  { id: "C6Bg2Fvu3IZ" },
+  { id: "CrLCbUsMPcv" },
+]
+
 interface InfoSectionProps {
   onStartScan: () => void
 }
@@ -45,12 +53,12 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
         }
       `}</style>
 
-      {/* ══ TOP DIVIDER ══ */}
+      {/* â•â• TOP DIVIDER â•â• */}
       <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, #ddb95a55, transparent)" }} />
 
-      {/* ══════════════════════════════════
-          SECTION 1 — INTRO
-      ══════════════════════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+          SECTION 1 â€” INTRO
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="info-section" style={{ position: "relative", overflow: "hidden" }}>
         {/* bg glow */}
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(221,185,90,0.08), transparent)", pointerEvents: "none" }} />
@@ -84,7 +92,7 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
           <h2 style={{ fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 800, lineHeight: 1.2, marginBottom: "20px", letterSpacing: "-0.02em" }}>
             Hair Fall Problems?{" "}
             <span style={{ background: "linear-gradient(90deg, #ddb95a, #f5e199)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              Bonitaa HQ Has the Solution! 🌟
+              Bonitaa HQ Has the Solution! ðŸŒŸ
             </span>
           </h2>
 
@@ -96,13 +104,13 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
         </div>
       </section>
 
-      {/* ══ DIVIDER ══ */}
+      {/* â•â• DIVIDER â•â• */}
       <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, rgba(221,185,90,0.2), transparent)" }} />
 
-     <VideoCarousel />
-      {/* ══════════════════════════════════
-          SECTION 2 — 3 FEATURE CARDS
-      ══════════════════════════════════ */}
+     <VideoCarousel reels={hairReels} />
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+          SECTION 2 â€” 3 FEATURE CARDS
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="info-section" style={{ position: "relative" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
 
@@ -113,9 +121,9 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
 
           <div className="info-grid-3">
             {[
-              { icon: <Smartphone style={{ width: 28, height: 28, color: "#ddb95a" }} />, step: "01", title: "Scan It Yourself Online! 📱", desc: "Wherever you are, analyze your hair using your phone and instantly download a personalized report designed just for you." },
-              { icon: <FlaskConical style={{ width: 28, height: 28, color: "#ddb95a" }} />, step: "02", title: "Only the Best Technology! 🔬", desc: "PRP, GFC, or Hair Transplant? We guide you to the right treatment, decided scientifically based on your condition." },
-              { icon: <Leaf style={{ width: 28, height: 28, color: "#ddb95a" }} />, step: "03", title: "Natural Solutions Too! 🌿", desc: "Not every treatment is necessary. Simple natural solutions with proper doctor guidance to improve hair health." },
+              { icon: <Smartphone style={{ width: 28, height: 28, color: "#ddb95a" }} />, step: "01", title: "Scan It Yourself Online! ðŸ“±", desc: "Wherever you are, analyze your hair using your phone and instantly download a personalized report designed just for you." },
+              { icon: <FlaskConical style={{ width: 28, height: 28, color: "#ddb95a" }} />, step: "02", title: "Only the Best Technology! ðŸ”¬", desc: "PRP, GFC, or Hair Transplant? We guide you to the right treatment, decided scientifically based on your condition." },
+              { icon: <Leaf style={{ width: 28, height: 28, color: "#ddb95a" }} />, step: "03", title: "Natural Solutions Too! ðŸŒ¿", desc: "Not every treatment is necessary. Simple natural solutions with proper doctor guidance to improve hair health." },
             ].map((item, i) => (
               <div key={i} style={{
                 background: "linear-gradient(145deg, #0e1118, #0a0d15)",
@@ -152,12 +160,12 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
         </div>
       </section>
 
-      {/* ══ DIVIDER ══ */}
+      {/* â•â• DIVIDER â•â• */}
       <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, rgba(221,185,90,0.2), transparent)" }} />
 
-      {/* ══════════════════════════════════
-          SECTION 3 — WHAT YOU GET (2-col)
-      ══════════════════════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+          SECTION 3 â€” WHAT YOU GET (2-col)
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="info-section" style={{ position: "relative" }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 55% 60% at 80% 50%, rgba(221,185,90,0.05), transparent)", pointerEvents: "none" }} />
         <div style={{ maxWidth: "1100px", margin: "0 auto", position: "relative" }}>
@@ -173,7 +181,7 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
                 </span>
               </h2>
               <p style={{ color: "#8a8a8a", lineHeight: 1.8, fontSize: "1rem" }}>
-                Every client gets a tailored experience — no generic solutions, only what works for your specific hair condition.
+                Every client gets a tailored experience â€” no generic solutions, only what works for your specific hair condition.
               </p>
               <div style={{ marginTop: "28px", display: "flex", gap: "8px", alignItems: "center" }}>
                 <div style={{ width: 48, height: 3, borderRadius: 4, background: "#ddb95a" }} />
@@ -186,8 +194,8 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               {[
                 { icon: <Zap style={{ width: 18, height: 18, color: "#ddb95a" }} />, title: "Fast & Accurate Results", desc: "Using the latest technology, we identify the cause of your hair loss with precision." },
-                { icon: <Users style={{ width: 18, height: 18, color: "#ddb95a" }} />, title: "Personalized Care", desc: "Special plans tailored for your hair type — no generic advice, only what works." },
-                { icon: <Award style={{ width: 18, height: 18, color: "#ddb95a" }} />, title: "Expert Guidance", desc: "Home remedies or advanced treatments — professional advice at every step." },
+                { icon: <Users style={{ width: 18, height: 18, color: "#ddb95a" }} />, title: "Personalized Care", desc: "Special plans tailored for your hair type â€” no generic advice, only what works." },
+                { icon: <Award style={{ width: 18, height: 18, color: "#ddb95a" }} />, title: "Expert Guidance", desc: "Home remedies or advanced treatments â€” professional advice at every step." },
               ].map((item, i) => (
                 <div key={i} style={{
                   display: "flex", gap: "16px",
@@ -215,12 +223,12 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
         </div>
       </section>
 
-      {/* ══ DIVIDER ══ */}
+      {/* â•â• DIVIDER â•â• */}
       <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, rgba(221,185,90,0.2), transparent)" }} />
 
-      {/* ══════════════════════════════════
-          SECTION 4 — STATS
-      ══════════════════════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+          SECTION 4 â€” STATS
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="info-section" style={{ position: "relative" }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(221,185,90,0.05), transparent)", pointerEvents: "none" }} />
         <div style={{ maxWidth: "1100px", margin: "0 auto", position: "relative" }}>
@@ -263,19 +271,19 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
 
                 <p style={{ fontSize: "1.5rem", fontWeight: 900, color: "#ddb95a", lineHeight: 1 }}>{item.stat}</p>
                 <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "#f2f0eb", margin: "4px 0 10px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.sub}</p>
-                <p style={{ fontSize: "0.82rem", lineHeight: 1.65, color: "#8a8a8a" }}>✔️ {item.desc}</p>
+                <p style={{ fontSize: "0.82rem", lineHeight: 1.65, color: "#8a8a8a" }}>âœ”ï¸ {item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══ DIVIDER ══ */}
+      {/* â•â• DIVIDER â•â• */}
       <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, rgba(221,185,90,0.2), transparent)" }} />
 
-      {/* ══════════════════════════════════
-          SECTION 5 — CTA
-      ══════════════════════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+          SECTION 5 â€” CTA
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section className="info-section" style={{ position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(221,185,90,0.08), transparent)", pointerEvents: "none" }} />
 
@@ -293,7 +301,7 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
 
           <p style={{ color: "#8a8a8a", lineHeight: 1.8, fontSize: "1rem", marginBottom: "32px", maxWidth: "640px", margin: "0 auto 32px" }}>
             At Bonitaa HQ, we understand the unique hair problems faced by Indians. With over 15 years of expertise,
-            we specialize in FDA-approved treatments — be it PRP, GFC, or Hair Transplant — based on scientific analysis.
+            we specialize in FDA-approved treatments â€” be it PRP, GFC, or Hair Transplant â€” based on scientific analysis.
           </p>
 
           {/* gold dot divider */}
@@ -360,7 +368,7 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
         </div>
       </section>
 
-      {/* ══ BOTTOM DIVIDER ══ */}
+      {/* â•â• BOTTOM DIVIDER â•â• */}
       <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, #ddb95a55, transparent)" }} />
     </div>
   )

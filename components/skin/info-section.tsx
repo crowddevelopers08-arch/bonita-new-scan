@@ -19,7 +19,7 @@ export function SkinInfoSection({ onStartScan: _onStartScan }: SkinInfoSectionPr
         .info-cta-btns { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
         .info-cta-btn { width: auto; }
         .info-side-images { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 0 auto 28px; max-width: 560px; }
-        .info-side-image { width: 100%; height: 180px; object-fit: cover; border-radius: 16px; border: 1px solid rgba(221,185,90,0.25); box-shadow: 0 6px 24px rgba(0,0,0,0.35); }
+        .info-side-image { width: 100%; height: 280px; object-fit: cover; border-radius: 16px; border: 1px solid rgba(221,185,90,0.25); box-shadow: 0 6px 24px rgba(0,0,0,0.35); }
 
         @media (max-width: 1024px) {
           .info-grid-4 { grid-template-columns: repeat(2, 1fr); }
@@ -31,7 +31,7 @@ export function SkinInfoSection({ onStartScan: _onStartScan }: SkinInfoSectionPr
           .info-grid-4 { grid-template-columns: repeat(2, 1fr); gap: 14px; }
           .info-cta-card { padding: 24px 16px; }
           .info-side-images { max-width: 440px; }
-          .info-side-image { height: 150px; }
+          .info-side-image { height: 240px; }
         }
         @media (max-width: 480px) {
           .info-section { padding: 20px 12px; }
@@ -39,7 +39,7 @@ export function SkinInfoSection({ onStartScan: _onStartScan }: SkinInfoSectionPr
           .info-cta-btns { flex-direction: column; align-items: stretch; }
           .info-cta-btn { justify-content: center; }
           .info-side-images { grid-template-columns: 1fr; gap: 12px; max-width: 280px; }
-          .info-side-image { height: 140px; }
+          .info-side-image { height: 280px; }
         }
       `}</style>
 
@@ -55,8 +55,8 @@ export function SkinInfoSection({ onStartScan: _onStartScan }: SkinInfoSectionPr
           </div>
 
           <div className="info-side-images">
-            <img src="before4.webp" alt="Skin scan left view" className="info-side-image" />
-            <img src="before5.webp" alt="Skin scan right view" className="info-side-image" />
+            <img src="sone.jpg" alt="Skin treatment visual one" className="info-side-image" />
+            <img src="stwo.jpg" alt="Skin treatment visual two" className="info-side-image" />
           </div>
 
           <h2 style={{ fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 800, lineHeight: 1.2, marginBottom: "20px", letterSpacing: "-0.02em" }}>
