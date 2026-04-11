@@ -148,7 +148,7 @@ export default async function DashboardPage({
                   <p className="text-sm text-muted-foreground">{scan.location}</p>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  {new Date(scan.createdAt).toLocaleString()}
+                  {new Date(scan.createdAt).toLocaleString(undefined, { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                 </p>
               </div>
             </article>
