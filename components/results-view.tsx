@@ -112,6 +112,7 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
   const [pdfFormOpen, setPdfFormOpen] = useState(false)
   const [pdfGenerating, setPdfGenerating] = useState(false)
   const [pdfForm, setPdfForm] = useState({ name: formData.name || "", phone: formData.phone || "", location: "" })
+  const [locationSelect, setLocationSelect] = useState("")
 
   const problem = (formData.problem || "hair-fall") as keyof typeof resultsData
   const data = resultsData[problem]
@@ -120,6 +121,7 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
 
   const handleDownload = () => {
     setPdfForm({ name: formData.name || "", phone: formData.phone || "", location: "" })
+    setLocationSelect("")
     setPdfFormOpen(true)
   }
 
@@ -359,13 +361,33 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="pdf-location" className="text-foreground">Location</Label>
-                <Input
+                <select
                   id="pdf-location"
-                  placeholder="Enter your location"
-                  value={pdfForm.location}
-                  onChange={(e) => setPdfForm({ ...pdfForm, location: e.target.value })}
-                  className="border-border/50 bg-background/50 focus:border-primary focus:ring-primary"
-                />
+                  value={locationSelect}
+                  onChange={(e) => {
+                    setLocationSelect(e.target.value)
+                    if (e.target.value !== "other") setPdfForm({ ...pdfForm, location: e.target.value })
+                    else setPdfForm({ ...pdfForm, location: "" })
+                  }}
+                  className="h-10 w-full rounded-md border border-border/50 bg-background/50 px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                >
+                  <option value="">Select your location</option>
+                  <option value="Trichy">Trichy</option>
+                  <option value="Coimbatore">Coimbatore</option>
+                  <option value="Madurai">Madurai</option>
+                  <option value="Chennai">Chennai</option>
+                  <option value="other">Other location</option>
+                </select>
+                {locationSelect === "other" && (
+                  <Input
+                    id="pdf-location-other"
+                    placeholder="Enter your location"
+                    value={pdfForm.location}
+                    onChange={(e) => setPdfForm({ ...pdfForm, location: e.target.value })}
+                    className="border-border/50 bg-background/50 focus:border-primary focus:ring-primary"
+                    autoFocus
+                  />
+                )}
               </div>
               <Button
                 type="submit"
