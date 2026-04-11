@@ -5,14 +5,14 @@ export const runtime = "nodejs"
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, phone, problem, imageData } = await req.json()
+    const { name, phone, location, problem, imageData } = await req.json()
 
     if (!name || !phone || !problem || !imageData) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
     const scan = await prisma.scan.create({
-      data: { name, phone, problem, imageData },
+      data: { name, phone, location: location ?? "", problem, imageData },
     })
 
     return NextResponse.json({ success: true, id: scan.id })

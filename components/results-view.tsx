@@ -111,7 +111,7 @@ async function downloadFromPublic(pdfPath: string, fileName: string) {
 export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProps) {
   const [pdfFormOpen, setPdfFormOpen] = useState(false)
   const [pdfGenerating, setPdfGenerating] = useState(false)
-  const [pdfForm, setPdfForm] = useState({ name: formData.name || "", phone: formData.phone || "" })
+  const [pdfForm, setPdfForm] = useState({ name: formData.name || "", phone: formData.phone || "", location: "" })
 
   const problem = (formData.problem || "hair-fall") as keyof typeof resultsData
   const data = resultsData[problem]
@@ -119,13 +119,13 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
   if (!data) return null
 
   const handleDownload = () => {
-    setPdfForm({ name: formData.name || "", phone: formData.phone || "" })
+    setPdfForm({ name: formData.name || "", phone: formData.phone || "", location: "" })
     setPdfFormOpen(true)
   }
 
   const handlePdfFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!pdfForm.name.trim() || !pdfForm.phone.trim()) return
+    if (!pdfForm.name.trim() || !pdfForm.phone.trim() || !pdfForm.location.trim()) return
     setPdfGenerating(true)
     try {
       const saveRes = await fetch("/api/save-scan", {
@@ -134,6 +134,7 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
         body: JSON.stringify({
           name: pdfForm.name,
           phone: pdfForm.phone,
+          location: pdfForm.location,
           problem,
           imageData: capturedImage ?? "",
         }),
@@ -356,9 +357,19 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
                   className="border-border/50 bg-background/50 focus:border-primary focus:ring-primary"
                 />
               </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="pdf-location" className="text-foreground">Location</Label>
+                <Input
+                  id="pdf-location"
+                  placeholder="Enter your location"
+                  value={pdfForm.location}
+                  onChange={(e) => setPdfForm({ ...pdfForm, location: e.target.value })}
+                  className="border-border/50 bg-background/50 focus:border-primary focus:ring-primary"
+                />
+              </div>
               <Button
                 type="submit"
-                disabled={!pdfForm.name.trim() || !pdfForm.phone.trim()}
+                disabled={!pdfForm.name.trim() || !pdfForm.phone.trim() || !pdfForm.location.trim()}
                 className="mt-2 w-full bg-primary text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_20px_rgba(221,185,90,0.4)] disabled:opacity-50"
               >
                 <Download className="mr-2 h-4 w-4" />

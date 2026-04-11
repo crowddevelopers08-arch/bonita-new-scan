@@ -144,6 +144,9 @@ export default async function DashboardPage({
                   <p className="text-xs text-muted-foreground">#{scan.id}</p>
                 </div>
                 <p className="text-sm text-muted-foreground">{scan.phone}</p>
+                {scan.location && (
+                  <p className="text-sm text-muted-foreground">{scan.location}</p>
+                )}
                 <p className="text-xs text-muted-foreground">
                   {new Date(scan.createdAt).toLocaleString()}
                 </p>
