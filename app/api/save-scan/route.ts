@@ -11,8 +11,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
+    const normalizedPhone = String(phone).trim()
+
+    const existing = await prisma.scan.findFirst({
+      where: { phone: normalizedPhone },
+      select: { id: true },
+    })
+
+    if (existing) {
+      return NextResponse.json(
+        { error: "This mobile number has already been used to submit a lead." },
+        { status: 409 },
+      )
+    }
+
     const scan = await prisma.scan.create({
-      data: { name, phone, location: location ?? "", problem, imageData },
+      data: { name, phone: normalizedPhone, location: location ?? "", problem, imageData },
     })
 
     return NextResponse.json({ success: true, id: scan.id })

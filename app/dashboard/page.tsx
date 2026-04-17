@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { DateRangePicker } from "@/components/ui/date-range-picker"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -37,7 +38,8 @@ const skinProblems = [
 type DashboardSearchParams = Promise<{
   q?: string
   problem?: string
-  date?: string
+  dateFrom?: string
+  dateTo?: string
 }>
 
 function isHairProblem(problem: string): boolean {
@@ -48,28 +50,20 @@ function isSkinProblem(problem: string): boolean {
   return skinProblems.includes(problem)
 }
 
-function matchesDateFilter(scanDate: Date, dateFilter: string) {
-  if (!dateFilter) {
-    return true
-  }
-
-  const today = new Date()
+function matchesDateFilter(scanDate: Date, dateFrom: string, dateTo: string) {
   const scanDay = new Date(scanDate)
+  scanDay.setHours(0, 0, 0, 0)
 
-  if (dateFilter === "today") {
-    return scanDay.toDateString() === today.toDateString()
+  if (dateFrom) {
+    const from = new Date(dateFrom)
+    from.setHours(0, 0, 0, 0)
+    if (scanDay < from) return false
   }
 
-  if (dateFilter === "last7") {
-    const sevenDaysAgo = new Date(today)
-    sevenDaysAgo.setDate(today.getDate() - 7)
-    return scanDay >= sevenDaysAgo
-  }
-
-  if (dateFilter === "last30") {
-    const thirtyDaysAgo = new Date(today)
-    thirtyDaysAgo.setDate(today.getDate() - 30)
-    return scanDay >= thirtyDaysAgo
+  if (dateTo) {
+    const to = new Date(dateTo)
+    to.setHours(23, 59, 59, 999)
+    if (scanDay > to) return false
   }
 
   return true
@@ -83,7 +77,8 @@ export default async function DashboardPage({
   const resolvedSearchParams = (await searchParams) ?? {}
   const query = resolvedSearchParams.q?.trim().toLowerCase() ?? ""
   const selectedProblem = resolvedSearchParams.problem ?? ""
-  const selectedDate = resolvedSearchParams.date ?? ""
+  const selectedDateFrom = resolvedSearchParams.dateFrom ?? ""
+  const selectedDateTo = resolvedSearchParams.dateTo ?? ""
 
   const scans = await prisma.scan.findMany({
     orderBy: { createdAt: "desc" },
@@ -96,7 +91,7 @@ export default async function DashboardPage({
       scan.phone.toLowerCase().includes(query)
 
     const matchesProblem = !selectedProblem || scan.problem === selectedProblem
-    const matchesDate = matchesDateFilter(scan.createdAt, selectedDate)
+    const matchesDate = matchesDateFilter(scan.createdAt, selectedDateFrom, selectedDateTo)
 
     return matchesQuery && matchesProblem && matchesDate
   })
@@ -212,20 +207,13 @@ export default async function DashboardPage({
           </div>
 
           <div>
-            <label htmlFor="dashboard-date" className="mb-2 block text-sm font-medium text-foreground">
+            <label className="mb-2 block text-sm font-medium text-foreground">
               Date range
             </label>
-            <select
-              id="dashboard-date"
-              name="date"
-              defaultValue={selectedDate}
-              className="h-11 w-full rounded-xl border border-border bg-background px-4 text-sm text-foreground outline-none transition focus:border-primary"
-            >
-              <option value="">All time</option>
-              <option value="today">Today</option>
-              <option value="last7">Last 7 days</option>
-              <option value="last30">Last 30 days</option>
-            </select>
+            <DateRangePicker
+              defaultFrom={selectedDateFrom}
+              defaultTo={selectedDateTo}
+            />
           </div>
 
           <div className="flex flex-wrap items-end gap-3 md:col-span-4">

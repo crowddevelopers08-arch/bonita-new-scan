@@ -112,6 +112,7 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
   const [pdfFormOpen, setPdfFormOpen] = useState(false)
   const [pdfGenerating, setPdfGenerating] = useState(false)
   const [pdfForm, setPdfForm] = useState({ name: formData.name || "", phone: formData.phone || "", location: "" })
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const [locationSelect, setLocationSelect] = useState("")
 
   const problem = (formData.problem || "hair-fall") as keyof typeof resultsData
@@ -122,6 +123,7 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
   const handleDownload = () => {
     setPdfForm({ name: formData.name || "", phone: formData.phone || "", location: "" })
     setLocationSelect("")
+    setSubmitError(null)
     setPdfFormOpen(true)
   }
 
@@ -152,11 +154,13 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
       window.location.assign("/thank-you")
     } catch (err) {
       console.error("Submit/download failed:", err)
-      if (err instanceof Error && err.message.includes("Failed to save scan")) {
-        alert(`Database save failed: ${err.message}`)
-      }
-      if (err instanceof Error && err.message.includes("PDF not found")) {
-        alert(err.message)
+      const msg = err instanceof Error ? err.message : "Something went wrong"
+      if (msg.includes("already been used")) {
+        setSubmitError("This mobile number has already submitted a lead. Please use a different number.")
+      } else if (msg.includes("PDF not found")) {
+        setSubmitError(msg)
+      } else {
+        setSubmitError("Something went wrong. Please try again.")
       }
     } finally {
       setPdfGenerating(false)
@@ -355,9 +359,12 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
                   type="tel"
                   placeholder="Enter your phone number"
                   value={pdfForm.phone}
-                  onChange={(e) => setPdfForm({ ...pdfForm, phone: e.target.value })}
-                  className="border-border/50 bg-background/50 focus:border-primary focus:ring-primary"
+                  onChange={(e) => { setSubmitError(null); setPdfForm({ ...pdfForm, phone: e.target.value }) }}
+                  className={submitError ? "border-destructive bg-background/50 focus:border-destructive focus:ring-destructive" : "border-border/50 bg-background/50 focus:border-primary focus:ring-primary"}
                 />
+                {submitError && (
+                  <p className="text-xs font-medium text-destructive">{submitError}</p>
+                )}
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="pdf-location" className="text-foreground">Location</Label>
