@@ -92,7 +92,7 @@ export function InfoSection({ onStartScan }: InfoSectionProps) {
           <h2 style={{ fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 800, lineHeight: 1.2, marginBottom: "20px", letterSpacing: "-0.02em" }}>
             Hair Fall Problems?{" "}
             <span style={{ background: "linear-gradient(90deg, #ddb95a, #f5e199)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              Bonitaa HQ Has the Solution! ðŸŒŸ
+              Bonitaa HQ Has the Solution!
             </span>
           </h2>
 
