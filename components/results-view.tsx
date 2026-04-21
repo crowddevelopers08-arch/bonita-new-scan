@@ -141,6 +141,7 @@ export function ResultsView({ formData, capturedImage, onBack }: ResultsViewProp
           location: pdfForm.location,
           problem,
           imageData: capturedImage ?? "",
+          pageUrl: window.location.href,
         }),
       })
       if (!saveRes.ok) {

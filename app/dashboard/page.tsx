@@ -88,7 +88,9 @@ export default async function DashboardPage({
     const matchesQuery =
       !query ||
       scan.name.toLowerCase().includes(query) ||
-      scan.phone.toLowerCase().includes(query)
+      scan.phone.toLowerCase().includes(query) ||
+      scan.pageUrl.toLowerCase().includes(query) ||
+      scan.formName.toLowerCase().includes(query)
 
     const matchesProblem = !selectedProblem || scan.problem === selectedProblem
     const matchesDate = matchesDateFilter(scan.createdAt, selectedDateFrom, selectedDateTo)
@@ -141,6 +143,42 @@ export default async function DashboardPage({
                 <p className="text-sm text-muted-foreground">{scan.phone}</p>
                 {scan.location && (
                   <p className="text-sm text-muted-foreground">{scan.location}</p>
+                )}
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <span className="rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                    {scan.formName || "website leads"}
+                  </span>
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                      scan.telecrmStatus.toLowerCase() === "created" ||
+                      scan.telecrmStatus.toLowerCase() === "updated" ||
+                      scan.telecrmStatus.toLowerCase() === "submitted"
+                        ? "bg-emerald-500/15 text-emerald-600"
+                        : "bg-destructive/10 text-destructive"
+                    }`}
+                  >
+                    TeleCRM: {scan.telecrmStatus || "pending"}
+                  </span>
+                </div>
+                {scan.pageUrl && (
+                  <a
+                    href={scan.pageUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block break-all text-sm font-medium text-primary hover:underline"
+                  >
+                    {scan.pageUrl}
+                  </a>
+                )}
+                {scan.telecrmLeadIds && (
+                  <p className="text-xs text-muted-foreground">
+                    CRM ID: {scan.telecrmLeadIds}
+                  </p>
+                )}
+                {scan.telecrmError && (
+                  <p className="rounded-xl bg-destructive/10 p-3 text-xs text-destructive">
+                    {scan.telecrmError}
+                  </p>
                 )}
                 <p className="text-xs text-muted-foreground">
                   {new Date(scan.createdAt).toLocaleString(undefined, { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })}
