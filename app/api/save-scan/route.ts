@@ -115,29 +115,39 @@ export async function POST(req: NextRequest) {
     const normalizedProblem = String(problem).trim()
     const normalizedPageUrl = normalizeUrl(pageUrl, req)
 
-    const existing = await prisma.scan.findFirst({
-      where: { phone: normalizedPhone },
-      select: { id: true },
-    })
+    let scanId: number | null = null
+    let databaseError = ""
 
-    if (existing) {
-      return NextResponse.json(
-        { error: "This mobile number has already been used to submit a lead." },
-        { status: 409 },
-      )
+    try {
+      const existing = await prisma.scan.findFirst({
+        where: { phone: normalizedPhone },
+        select: { id: true },
+      })
+
+      if (existing) {
+        return NextResponse.json(
+          { error: "This mobile number has already been used to submit a lead." },
+          { status: 409 },
+        )
+      }
+
+      const scan = await prisma.scan.create({
+        data: {
+          name: normalizedName,
+          phone: normalizedPhone,
+          location: normalizedLocation,
+          problem: normalizedProblem,
+          imageData,
+          pageUrl: normalizedPageUrl,
+          formName: FORM_NAME,
+        },
+      })
+
+      scanId = scan.id
+    } catch (error) {
+      databaseError = "Database save failed, but TeleCRM was attempted."
+      console.error("Database save failed; continuing with TeleCRM:", error)
     }
-
-    const scan = await prisma.scan.create({
-      data: {
-        name: normalizedName,
-        phone: normalizedPhone,
-        location: normalizedLocation,
-        problem: normalizedProblem,
-        imageData,
-        pageUrl: normalizedPageUrl,
-        formName: FORM_NAME,
-      },
-    })
 
     const telecrm = await syncTelecrmLead({
       name: normalizedName,
@@ -147,20 +157,39 @@ export async function POST(req: NextRequest) {
       pageUrl: normalizedPageUrl,
     })
 
-    await prisma.scan.update({
-      where: { id: scan.id },
-      data: {
-        telecrmStatus: telecrm.status,
-        telecrmLeadIds: telecrm.leadIds,
-        telecrmError: telecrm.error,
-      },
-    })
+    if (scanId) {
+      try {
+        await prisma.scan.update({
+          where: { id: scanId },
+          data: {
+            telecrmStatus: telecrm.status,
+            telecrmLeadIds: telecrm.leadIds,
+            telecrmError: telecrm.error,
+          },
+        })
+      } catch (error) {
+        databaseError = "Database status update failed after TeleCRM sync."
+        console.error("Database status update failed after TeleCRM sync:", error)
+      }
+    }
 
     if (!telecrm.ok) {
       console.error("TeleCRM sync failed:", telecrm.error)
+      if (!scanId) {
+        return NextResponse.json(
+          { error: telecrm.error || "TeleCRM sync failed", databaseError, telecrm },
+          { status: 502 },
+        )
+      }
     }
 
-    return NextResponse.json({ success: true, id: scan.id, telecrm })
+    return NextResponse.json({
+      success: true,
+      id: scanId,
+      savedToDatabase: Boolean(scanId),
+      databaseError,
+      telecrm,
+    })
   } catch (error) {
     console.error("Failed to save scan:", error)
     const message =

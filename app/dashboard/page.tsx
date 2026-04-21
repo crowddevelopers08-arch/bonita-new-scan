@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { DateRangePicker } from "@/components/ui/date-range-picker"
+import type { Prisma } from "@prisma/client"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -40,6 +41,27 @@ type DashboardSearchParams = Promise<{
   problem?: string
   dateFrom?: string
   dateTo?: string
+  page?: string
+}>
+
+const pageSize = 25
+
+const dashboardScanSelect = {
+  id: true,
+  name: true,
+  phone: true,
+  location: true,
+  problem: true,
+  pageUrl: true,
+  formName: true,
+  telecrmStatus: true,
+  telecrmLeadIds: true,
+  telecrmError: true,
+  createdAt: true,
+} satisfies Prisma.ScanSelect
+
+type DashboardScan = Prisma.ScanGetPayload<{
+  select: typeof dashboardScanSelect
 }>
 
 function isHairProblem(problem: string): boolean {
@@ -69,6 +91,59 @@ function matchesDateFilter(scanDate: Date, dateFrom: string, dateTo: string) {
   return true
 }
 
+function parseDateBoundary(date: string, boundary: "start" | "end") {
+  if (!date) return undefined
+
+  const parsed = new Date(date)
+  if (Number.isNaN(parsed.getTime())) return undefined
+
+  if (boundary === "start") {
+    parsed.setHours(0, 0, 0, 0)
+  } else {
+    parsed.setHours(23, 59, 59, 999)
+  }
+
+  return parsed
+}
+
+function parsePage(page: string | undefined) {
+  const parsed = Number(page)
+  if (!Number.isInteger(parsed) || parsed < 1) return 1
+
+  return parsed
+}
+
+function buildDashboardUrl(
+  params: {
+    q?: string
+    problem?: string
+    dateFrom?: string
+    dateTo?: string
+  },
+  page: number,
+) {
+  const searchParams = new URLSearchParams()
+
+  if (params.q) searchParams.set("q", params.q)
+  if (params.problem) searchParams.set("problem", params.problem)
+  if (params.dateFrom) searchParams.set("dateFrom", params.dateFrom)
+  if (params.dateTo) searchParams.set("dateTo", params.dateTo)
+  if (page > 1) searchParams.set("page", String(page))
+
+  const queryString = searchParams.toString()
+  return queryString ? `/dashboard?${queryString}` : "/dashboard"
+}
+
+function getDatabaseErrorMessage(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error)
+
+  if (message.toLowerCase().includes("data transfer quota")) {
+    return "Neon has paused database reads because this project exceeded its data transfer quota. Upgrade the Neon plan or wait for the quota reset, then refresh this dashboard."
+  }
+
+  return "The dashboard could not load scan records right now. Please refresh in a moment."
+}
+
 export default async function DashboardPage({
   searchParams,
 }: {
@@ -79,29 +154,69 @@ export default async function DashboardPage({
   const selectedProblem = resolvedSearchParams.problem ?? ""
   const selectedDateFrom = resolvedSearchParams.dateFrom ?? ""
   const selectedDateTo = resolvedSearchParams.dateTo ?? ""
+  const currentPage = parsePage(resolvedSearchParams.page)
 
-  const scans = await prisma.scan.findMany({
-    orderBy: { createdAt: "desc" },
-  })
+  const createdAt: Prisma.DateTimeFilter = {}
+  const dateFrom = parseDateBoundary(selectedDateFrom, "start")
+  const dateTo = parseDateBoundary(selectedDateTo, "end")
 
-  const filteredScans = scans.filter((scan) => {
-    const matchesQuery =
-      !query ||
-      scan.name.toLowerCase().includes(query) ||
-      scan.phone.toLowerCase().includes(query) ||
-      scan.pageUrl.toLowerCase().includes(query) ||
-      scan.formName.toLowerCase().includes(query)
+  if (dateFrom) createdAt.gte = dateFrom
+  if (dateTo) createdAt.lte = dateTo
 
-    const matchesProblem = !selectedProblem || scan.problem === selectedProblem
-    const matchesDate = matchesDateFilter(scan.createdAt, selectedDateFrom, selectedDateTo)
+  const where: Prisma.ScanWhereInput = {
+    ...(selectedProblem ? { problem: selectedProblem } : {}),
+    ...(dateFrom || dateTo ? { createdAt } : {}),
+    ...(query
+      ? {
+          OR: [
+            { name: { contains: query, mode: "insensitive" } },
+            { phone: { contains: query, mode: "insensitive" } },
+            { pageUrl: { contains: query, mode: "insensitive" } },
+            { formName: { contains: query, mode: "insensitive" } },
+          ],
+        }
+      : {}),
+  }
 
-    return matchesQuery && matchesProblem && matchesDate
-  })
+  let scans: DashboardScan[] = []
+  let filteredCount = 0
+  let totalCount = 0
+  let databaseError = ""
+
+  try {
+    const [scanRows, matchingRows, allRows] = await Promise.all([
+      prisma.scan.findMany({
+        where,
+        select: dashboardScanSelect,
+        orderBy: { createdAt: "desc" },
+        skip: (currentPage - 1) * pageSize,
+        take: pageSize,
+      }),
+      prisma.scan.count({ where }),
+      prisma.scan.count(),
+    ])
+
+    scans = scanRows
+    filteredCount = matchingRows
+    totalCount = allRows
+  } catch (error) {
+    console.error("Failed to load dashboard scans:", error)
+    databaseError = getDatabaseErrorMessage(error)
+  }
+
+  const filteredScans = scans.filter((scan) =>
+    matchesDateFilter(scan.createdAt, selectedDateFrom, selectedDateTo),
+  )
 
   const hairScans = filteredScans.filter((scan) => isHairProblem(scan.problem))
   const skinScans = filteredScans.filter((scan) => isSkinProblem(scan.problem))
+  const totalPages = Math.max(1, Math.ceil(filteredCount / pageSize))
+  const hasNewerPage = currentPage > 1
+  const hasOlderPage = currentPage < totalPages
+  const newerPageUrl = buildDashboardUrl(resolvedSearchParams, currentPage - 1)
+  const olderPageUrl = buildDashboardUrl(resolvedSearchParams, currentPage + 1)
 
-  const renderScanGrid = (scans: typeof hairScans, title: string) => (
+  const renderScanGrid = (scans: DashboardScan[], title: string) => (
     <section className="rounded-3xl border border-border bg-card/60 p-5 shadow-sm">
       <div className="mb-5 flex items-start justify-between gap-4 border-b border-border pb-4">
         <div>
@@ -123,13 +238,10 @@ export default async function DashboardPage({
               key={scan.id}
               className="overflow-hidden rounded-2xl border border-border bg-background"
             >
-              <div className="relative h-52 w-full bg-muted">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={scan.imageData}
-                  alt={`Scan of ${scan.name}`}
-                  className="h-full w-full object-cover"
-                />
+              <div className="relative flex h-32 w-full items-center justify-center bg-muted">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-background text-xl font-bold text-foreground">
+                  {scan.name.trim().charAt(0).toUpperCase() || "L"}
+                </div>
                 <span className="absolute right-3 top-3 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
                   {problemLabels[scan.problem] ?? scan.problem}
                 </span>
@@ -197,10 +309,25 @@ export default async function DashboardPage({
         <div className="border-b border-border pb-6">
           <h1 className="text-3xl font-bold text-foreground">Scan Dashboard</h1>
           <p className="mt-1 text-muted-foreground">
-            {filteredScans.length} filtered {filteredScans.length === 1 ? "record" : "records"}
-            {" "}from {scans.length} total
+            {databaseError ? (
+              "Database records are temporarily unavailable."
+            ) : (
+              <>
+                {filteredCount} filtered {filteredCount === 1 ? "record" : "records"}
+                {" "}from {totalCount} total
+                {filteredCount > 0 && (
+                  <>. Page {currentPage} of {totalPages}.</>
+                )}
+              </>
+            )}
           </p>
         </div>
+
+        {databaseError && (
+          <div className="rounded-3xl border border-destructive/30 bg-destructive/10 p-5 text-sm text-destructive">
+            {databaseError}
+          </div>
+        )}
 
         <form className="grid gap-4 rounded-3xl border border-border bg-card/60 p-5 shadow-sm md:grid-cols-4">
           <div className="md:col-span-2">
@@ -269,6 +396,40 @@ export default async function DashboardPage({
             </a>
           </div>
         </form>
+
+        {!databaseError && filteredCount > pageSize && (
+          <nav className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-border bg-card/60 p-4 text-sm">
+            <p className="text-muted-foreground">
+              Showing {(currentPage - 1) * pageSize + 1}-{Math.min(currentPage * pageSize, filteredCount)} of {filteredCount}
+            </p>
+            <div className="flex gap-3">
+              {hasNewerPage ? (
+                <a
+                  href={newerPageUrl}
+                  className="inline-flex h-10 items-center justify-center rounded-xl border border-border px-4 font-semibold text-foreground transition hover:bg-muted"
+                >
+                  Newer
+                </a>
+              ) : (
+                <span className="inline-flex h-10 items-center justify-center rounded-xl border border-border px-4 font-semibold text-muted-foreground opacity-50">
+                  Newer
+                </span>
+              )}
+              {hasOlderPage ? (
+                <a
+                  href={olderPageUrl}
+                  className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 font-semibold text-primary-foreground transition hover:opacity-90"
+                >
+                  Older
+                </a>
+              ) : (
+                <span className="inline-flex h-10 items-center justify-center rounded-xl bg-muted px-4 font-semibold text-muted-foreground opacity-50">
+                  Older
+                </span>
+              )}
+            </div>
+          </nav>
+        )}
 
         <div className="grid gap-6 xl:grid-cols-2 xl:items-start">
           {renderScanGrid(hairScans, "Hair Leads")}
