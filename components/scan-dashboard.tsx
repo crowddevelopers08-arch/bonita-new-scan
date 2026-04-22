@@ -163,6 +163,15 @@ function getDatabaseErrorMessage(error: unknown) {
   return "The dashboard could not load scan records right now. Please refresh in a moment."
 }
 
+function getCleanDisplayUrl(url: string) {
+  try {
+    const parsed = new URL(url)
+    return `${parsed.origin}${parsed.pathname}`
+  } catch {
+    return url.split("?")[0]
+  }
+}
+
 export async function ScanDashboard({
   searchParams,
   prismaClient,
@@ -313,7 +322,7 @@ export async function ScanDashboard({
                     rel="noreferrer"
                     className="block break-all text-sm font-medium text-primary hover:underline"
                   >
-                    {scan.pageUrl}
+                    {getCleanDisplayUrl(scan.pageUrl)}
                   </a>
                 )}
                 {scan.telecrmLeadIds && (

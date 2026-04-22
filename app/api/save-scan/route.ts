@@ -5,6 +5,7 @@ import type { PrismaClient } from "@prisma/client"
 export const runtime = "nodejs"
 
 const FORM_NAME = "website leads"
+const DUPLICATE_PHONE_ERROR = "This mobile number has already been used to submit a lead."
 
 type TelecrmResponse = {
   modifiedLeadIds?: string[]
@@ -27,6 +28,33 @@ function normalizeUrl(pageUrl: unknown, req: NextRequest) {
   if (referer) return referer
 
   return getRequestOrigin(req)
+}
+
+function getPhoneDuplicateKey(phone: string) {
+  const digits = phone.replace(/\D/g, "")
+
+  if (digits.length > 10) {
+    return digits.slice(-10)
+  }
+
+  return digits
+}
+
+async function findDuplicateScanByPhone(client: PrismaClient, phone: string) {
+  const submittedPhoneKey = getPhoneDuplicateKey(phone)
+
+  if (!submittedPhoneKey) {
+    return null
+  }
+
+  const existingScans = await client.scan.findMany({
+    select: {
+      id: true,
+      phone: true,
+    },
+  })
+
+  return existingScans.find((scan) => getPhoneDuplicateKey(scan.phone) === submittedPhoneKey) ?? null
 }
 
 async function syncTelecrmLead({
@@ -120,10 +148,7 @@ async function createScanRecord({
   preventDuplicate: boolean
 }) {
   if (preventDuplicate) {
-    const existing = await client.scan.findFirst({
-      where: { phone: data.phone },
-      select: { id: true },
-    })
+    const existing = await findDuplicateScanByPhone(client, data.phone)
 
     if (existing) {
       return { id: null, duplicate: true }
@@ -193,7 +218,7 @@ export async function POST(req: NextRequest) {
 
       if (primarySave.duplicate) {
         return NextResponse.json(
-          { error: "This mobile number has already been used to submit a lead." },
+          { error: DUPLICATE_PHONE_ERROR },
           { status: 409 },
         )
       }

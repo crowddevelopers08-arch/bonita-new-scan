@@ -77,12 +77,14 @@ export function SkinResultsView({ formData, capturedImage, onBack }: SkinResults
   const [pdfFormOpen, setPdfFormOpen] = useState(false)
   const [pdfGenerating, setPdfGenerating] = useState(false)
   const [pdfForm, setPdfForm] = useState({ name: formData.name || "", phone: formData.phone || "" })
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const problem = (formData.problem || "acne") as SkinProblemKey
   const data = resultsData[problem]
 
   const handleDownload = () => {
     setPdfForm({ name: formData.name || "", phone: formData.phone || "" })
+    setSubmitError(null)
     setPdfFormOpen(true)
   }
 
@@ -114,10 +116,13 @@ export function SkinResultsView({ formData, capturedImage, onBack }: SkinResults
       window.location.assign("/thank-you")
     } catch (err) {
       console.error("Submit/download failed:", err)
-      if (err instanceof Error && err.message.includes("Failed to save scan")) {
-        alert(`Database save failed: ${err.message}`)
+      const msg = err instanceof Error ? err.message : "Something went wrong"
+      if (msg.includes("already been used")) {
+        setSubmitError("This mobile number has already submitted a lead. Please use a different number.")
+      } else if (msg.includes("Failed to save scan")) {
+        setSubmitError(`Database save failed: ${msg}`)
       } else {
-        alert("Unable to generate the PDF right now.")
+        setSubmitError("Unable to generate the PDF right now.")
       }
     } finally {
       setPdfGenerating(false)
@@ -223,7 +228,20 @@ export function SkinResultsView({ formData, capturedImage, onBack }: SkinResults
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="skin-pdf-phone" className="text-foreground">Phone Number</Label>
-                <Input id="skin-pdf-phone" type="tel" placeholder="Enter your phone number" value={pdfForm.phone} onChange={(e) => setPdfForm({ ...pdfForm, phone: e.target.value })} className="border-border/50 bg-background/50 focus:border-primary focus:ring-primary" />
+                <Input
+                  id="skin-pdf-phone"
+                  type="tel"
+                  placeholder="Enter your phone number"
+                  value={pdfForm.phone}
+                  onChange={(e) => {
+                    setSubmitError(null)
+                    setPdfForm({ ...pdfForm, phone: e.target.value })
+                  }}
+                  className={submitError ? "border-destructive bg-background/50 focus:border-destructive focus:ring-destructive" : "border-border/50 bg-background/50 focus:border-primary focus:ring-primary"}
+                />
+                {submitError && (
+                  <p className="text-xs font-medium text-destructive">{submitError}</p>
+                )}
               </div>
               <Button type="submit" disabled={!pdfForm.name.trim() || !pdfForm.phone.trim()} className="mt-2 w-full bg-primary text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_20px_rgba(221,185,90,0.4)] disabled:opacity-50">
                 <Download className="mr-2 h-4 w-4" />
