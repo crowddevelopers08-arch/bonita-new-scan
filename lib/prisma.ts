@@ -26,9 +26,48 @@ if (!process.env.DATABASE_URL_UNPOOLED) {
     process.env.DIRECT_URL || process.env.POSTGRES_URL_NON_POOLING || ""
 }
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
+function getDashboardTwoDatabaseUrl() {
+  const databaseUrl =
+    process.env.DASHBOARD_TWO_POSTGRES_PRISMA_URL ||
+    process.env.DASHBOARD_TWO_DATABASE_URL ||
+    ""
+
+  return databaseUrl ? withPoolDefaults(databaseUrl) : ""
+}
+
+function createPrismaClient(databaseUrl?: string) {
+  return new PrismaClient(
+    databaseUrl
+      ? {
+          datasources: {
+            db: {
+              url: databaseUrl,
+            },
+          },
+        }
+      : undefined,
+  )
+}
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient
+  prismaDashboardTwo: PrismaClient
+  prismaDashboardTwoUrl: string
+}
 
 export const prisma =
-  globalForPrisma.prisma ?? new PrismaClient()
+  globalForPrisma.prisma ?? createPrismaClient()
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
+const dashboardTwoDatabaseUrl = getDashboardTwoDatabaseUrl()
+
+export const prismaDashboardTwo =
+  globalForPrisma.prismaDashboardTwo &&
+  globalForPrisma.prismaDashboardTwoUrl === dashboardTwoDatabaseUrl
+    ? globalForPrisma.prismaDashboardTwo
+    : createPrismaClient(dashboardTwoDatabaseUrl)
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma
+  globalForPrisma.prismaDashboardTwo = prismaDashboardTwo
+  globalForPrisma.prismaDashboardTwoUrl = dashboardTwoDatabaseUrl
+}

@@ -1,5 +1,5 @@
 import { ScanDashboard } from "@/components/scan-dashboard"
-import { prisma } from "@/lib/prisma"
+import { prismaDashboardTwo } from "@/lib/prisma"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -12,7 +12,7 @@ type DashboardSearchParams = Promise<{
   page?: string
 }>
 
-export default async function DashboardPage({
+export default async function DashboardTwoPage({
   searchParams,
 }: {
   searchParams?: DashboardSearchParams
@@ -20,9 +20,9 @@ export default async function DashboardPage({
   return (
     <ScanDashboard
       searchParams={searchParams}
-      prismaClient={prisma}
-      basePath="/dashboard"
-      title="Scan Dashboard"
+      prismaClient={prismaDashboardTwo}
+      basePath="/dashboardtwo"
+      title="Scan Dashboard Two"
     />
   )
 }
