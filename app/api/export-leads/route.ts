@@ -56,6 +56,7 @@ function parseDateBoundary(date: string | null, boundary: "start" | "end") {
 function buildWhere(searchParams: URLSearchParams): Prisma.ScanWhereInput {
   const query = searchParams.get("q")?.trim().toLowerCase() ?? ""
   const selectedProblem = searchParams.get("problem") ?? ""
+  const selectedLocation = searchParams.get("location")?.trim() ?? ""
   const dateFrom = parseDateBoundary(searchParams.get("dateFrom"), "start")
   const dateTo = parseDateBoundary(searchParams.get("dateTo"), "end")
   const createdAt: Prisma.DateTimeFilter = {}
@@ -65,6 +66,7 @@ function buildWhere(searchParams: URLSearchParams): Prisma.ScanWhereInput {
 
   return {
     ...(selectedProblem ? { problem: selectedProblem } : {}),
+    ...(selectedLocation ? { location: selectedLocation } : {}),
     ...(dateFrom || dateTo ? { createdAt } : {}),
     ...(query
       ? {

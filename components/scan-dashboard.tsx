@@ -35,6 +35,7 @@ const skinProblems = [
 type DashboardSearchParams = Promise<{
   q?: string
   problem?: string
+  location?: string
   dateFrom?: string
   dateTo?: string
   page?: string
@@ -115,6 +116,7 @@ function buildDashboardUrl(
   params: {
     q?: string
     problem?: string
+    location?: string
     dateFrom?: string
     dateTo?: string
   },
@@ -124,6 +126,7 @@ function buildDashboardUrl(
 
   if (params.q) searchParams.set("q", params.q)
   if (params.problem) searchParams.set("problem", params.problem)
+  if (params.location) searchParams.set("location", params.location)
   if (params.dateFrom) searchParams.set("dateFrom", params.dateFrom)
   if (params.dateTo) searchParams.set("dateTo", params.dateTo)
   if (page > 1) searchParams.set("page", String(page))
@@ -137,6 +140,7 @@ function buildExportUrl(
   params: {
     q?: string
     problem?: string
+    location?: string
     dateFrom?: string
     dateTo?: string
   },
@@ -146,6 +150,7 @@ function buildExportUrl(
   if (basePath === "/dashboardtwo") searchParams.set("source", "dashboardtwo")
   if (params.q) searchParams.set("q", params.q)
   if (params.problem) searchParams.set("problem", params.problem)
+  if (params.location) searchParams.set("location", params.location)
   if (params.dateFrom) searchParams.set("dateFrom", params.dateFrom)
   if (params.dateTo) searchParams.set("dateTo", params.dateTo)
 
@@ -186,6 +191,7 @@ export async function ScanDashboard({
   const resolvedSearchParams = (await searchParams) ?? {}
   const query = resolvedSearchParams.q?.trim().toLowerCase() ?? ""
   const selectedProblem = resolvedSearchParams.problem ?? ""
+  const selectedLocation = resolvedSearchParams.location?.trim() ?? ""
   const selectedDateFrom = resolvedSearchParams.dateFrom ?? ""
   const selectedDateTo = resolvedSearchParams.dateTo ?? ""
   const currentPage = parsePage(resolvedSearchParams.page)
@@ -199,6 +205,7 @@ export async function ScanDashboard({
 
   const where: Prisma.ScanWhereInput = {
     ...(selectedProblem ? { problem: selectedProblem } : {}),
+    ...(selectedLocation ? { location: selectedLocation } : {}),
     ...(dateFrom || dateTo ? { createdAt } : {}),
     ...(query
       ? {
@@ -216,9 +223,10 @@ export async function ScanDashboard({
   let filteredCount = 0
   let totalCount = 0
   let databaseError = ""
+  let locationOptions: string[] = []
 
   try {
-    const [scanRows, matchingRows, allRows] = await Promise.all([
+    const [scanRows, matchingRows, allRows, locationRows] = await Promise.all([
       prismaClient.scan.findMany({
         where,
         select: dashboardScanSelect,
@@ -228,11 +236,28 @@ export async function ScanDashboard({
       }),
       prismaClient.scan.count({ where }),
       prismaClient.scan.count(),
+      prismaClient.scan.findMany({
+        where: {
+          location: {
+            not: "",
+          },
+        },
+        select: {
+          location: true,
+        },
+        distinct: ["location"],
+        orderBy: {
+          location: "asc",
+        },
+      }),
     ])
 
     scans = scanRows
     filteredCount = matchingRows
     totalCount = allRows
+    locationOptions = locationRows
+      .map((row) => row.location.trim())
+      .filter(Boolean)
   } catch (error) {
     console.error("Failed to load dashboard scans:", error)
     databaseError = getDatabaseErrorMessage(error)
@@ -373,7 +398,7 @@ export async function ScanDashboard({
         )}
 
         <form className="grid gap-4 rounded-3xl border border-border bg-card/60 p-5 shadow-sm md:grid-cols-4">
-          <div className="md:col-span-2">
+          <div>
             <label htmlFor="dashboard-search" className="mb-2 block text-sm font-medium text-foreground">
               Search by name or phone
             </label>
@@ -411,6 +436,25 @@ export async function ScanDashboard({
                   </option>
                 ))}
               </optgroup>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="dashboard-location" className="mb-2 block text-sm font-medium text-foreground">
+              Location
+            </label>
+            <select
+              id="dashboard-location"
+              name="location"
+              defaultValue={selectedLocation}
+              className="h-11 w-full rounded-xl border border-border bg-background px-4 text-sm text-foreground outline-none transition focus:border-primary"
+            >
+              <option value="">All locations</option>
+              {locationOptions.map((location) => (
+                <option key={location} value={location}>
+                  {location}
+                </option>
+              ))}
             </select>
           </div>
 
