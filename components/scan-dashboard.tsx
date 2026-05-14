@@ -41,7 +41,7 @@ type DashboardSearchParams = Promise<{
   page?: string
 }>
 
-const pageSize = 25
+const pageSize = 100
 
 const dashboardScanSelect = {
   id: true,
@@ -64,10 +64,6 @@ type DashboardScan = Prisma.ScanGetPayload<{
 
 function isHairProblem(problem: string): boolean {
   return hairProblems.includes(problem)
-}
-
-function isSkinProblem(problem: string): boolean {
-  return skinProblems.includes(problem)
 }
 
 function matchesDateFilter(scanDate: Date, dateFrom: string, dateTo: string) {
@@ -268,7 +264,6 @@ export async function ScanDashboard({
   )
 
   const hairScans = filteredScans.filter((scan) => isHairProblem(scan.problem))
-  const skinScans = filteredScans.filter((scan) => isSkinProblem(scan.problem))
   const totalPages = Math.max(1, Math.ceil(filteredCount / pageSize))
   const hasNewerPage = currentPage > 1
   const hasOlderPage = currentPage < totalPages
@@ -292,7 +287,7 @@ export async function ScanDashboard({
           No {title.toLowerCase()} match the current filters.
         </div>
       ) : (
-        <div className="grid gap-4 xl:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {scans.map((scan) => (
             <article
               key={scan.id}
@@ -524,9 +519,8 @@ export async function ScanDashboard({
           </nav>
         )}
 
-        <div className="grid gap-6 xl:grid-cols-2 xl:items-start">
+        <div className="grid gap-6">
           {renderScanGrid(hairScans, "Hair Leads")}
-          {renderScanGrid(skinScans, "Skin Leads")}
         </div>
       </div>
     </main>
