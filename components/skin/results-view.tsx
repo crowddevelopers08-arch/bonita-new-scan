@@ -78,6 +78,7 @@ export function SkinResultsView({ formData, capturedImage, onBack }: SkinResults
   const [pdfGenerating, setPdfGenerating] = useState(false)
   const [pdfForm, setPdfForm] = useState({ name: formData.name || "", phone: formData.phone || "" })
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [clinicVisit, setClinicVisit] = useState<"" | "yes" | "no">("")
 
   const problem = (formData.problem || "acne") as SkinProblemKey
   const data = resultsData[problem]
@@ -85,6 +86,7 @@ export function SkinResultsView({ formData, capturedImage, onBack }: SkinResults
   const handleDownload = () => {
     setPdfForm({ name: formData.name || "", phone: formData.phone || "" })
     setSubmitError(null)
+    setClinicVisit("")
     setPdfFormOpen(true)
   }
 
@@ -243,7 +245,39 @@ export function SkinResultsView({ formData, capturedImage, onBack }: SkinResults
                   <p className="text-xs font-medium text-destructive">{submitError}</p>
                 )}
               </div>
-              <Button type="submit" disabled={!pdfForm.name.trim() || !pdfForm.phone.trim()} className="mt-2 w-full bg-primary text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_20px_rgba(221,185,90,0.4)] disabled:opacity-50">
+              <div className="flex flex-col gap-2">
+                <Label className="text-foreground">Are you willing to visit Bonita hair and skin clinic?</Label>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setClinicVisit("yes")}
+                    style={{
+                      flex: 1, padding: "10px", borderRadius: "8px", fontWeight: 700, fontSize: "0.9rem",
+                      border: clinicVisit === "yes" ? "2px solid #ddb95a" : "2px solid rgba(221,185,90,0.25)",
+                      background: clinicVisit === "yes" ? "rgba(221,185,90,0.18)" : "rgba(221,185,90,0.05)",
+                      color: clinicVisit === "yes" ? "#ddb95a" : "#9a9a9a",
+                      cursor: "pointer", transition: "all 0.15s"
+                    }}
+                  >
+                    Yes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setClinicVisit("no"); setPdfFormOpen(false) }}
+                    style={{
+                      flex: 1, padding: "10px", borderRadius: "8px", fontWeight: 700, fontSize: "0.9rem",
+                      border: clinicVisit === "no" ? "2px solid #ef4444" : "2px solid rgba(239,68,68,0.25)",
+                      background: clinicVisit === "no" ? "rgba(239,68,68,0.15)" : "rgba(239,68,68,0.04)",
+                      color: clinicVisit === "no" ? "#ef4444" : "#9a9a9a",
+                      cursor: "pointer", transition: "all 0.15s"
+                    }}
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+
+              <Button type="submit" disabled={!pdfForm.name.trim() || !pdfForm.phone.trim() || clinicVisit !== "yes"} className="mt-2 w-full bg-primary text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_20px_rgba(221,185,90,0.4)] disabled:opacity-50">
                 <Download className="mr-2 h-4 w-4" />
                 Generate & Download PDF
               </Button>

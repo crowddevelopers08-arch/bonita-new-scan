@@ -57,6 +57,60 @@ export default function ThankYouPage() {
             Your details have been submitted successfully and your PDF should already be downloading.
             Our team will connect with you soon.
           </p>
+
+          {/* Promo code section */}
+          <div
+            style={{
+              marginTop: "28px",
+              padding: "22px 20px",
+              borderRadius: "16px",
+              background: "linear-gradient(135deg, rgba(221,185,90,0.14), rgba(221,185,90,0.05))",
+              border: "1px solid rgba(221,185,90,0.4)",
+              boxShadow: "0 0 30px rgba(221,185,90,0.1)",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(90deg, transparent, #ddb95a, transparent)" }} />
+            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#ddb95a", marginBottom: "10px" }}>
+              Exclusive Offer
+            </p>
+            <div
+              style={{
+                display: "inline-block",
+                padding: "10px 24px",
+                borderRadius: "10px",
+                background: "rgba(221,185,90,0.15)",
+                border: "2px dashed rgba(221,185,90,0.6)",
+                fontSize: "1.5rem",
+                fontWeight: 900,
+                letterSpacing: "0.08em",
+                color: "#ddb95a",
+                marginBottom: "14px",
+                fontFamily: "monospace",
+              }}
+            >
+              Bonita@2026
+            </div>
+            <p
+              style={{
+                margin: "0 auto",
+                maxWidth: "380px",
+                lineHeight: 1.7,
+                fontSize: "0.95rem",
+                fontWeight: 600,
+                color: "#f2f0eb",
+                background: "linear-gradient(90deg, rgba(221,185,90,0.18), rgba(221,185,90,0.08))",
+                borderLeft: "3px solid #ddb95a",
+                padding: "10px 14px",
+                borderRadius: "0 8px 8px 0",
+                textAlign: "left",
+              }}
+            >
+              If you visit the clinic with this code you will receive an{" "}
+              <span style={{ color: "#ddb95a", fontWeight: 800 }}>additional discount up to 20%</span>
+            </p>
+          </div>
         </div>
       </main>
     </>
