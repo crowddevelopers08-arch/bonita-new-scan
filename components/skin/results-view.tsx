@@ -246,7 +246,7 @@ export function SkinResultsView({ formData, capturedImage, onBack }: SkinResults
                 )}
               </div>
               <div className="flex flex-col gap-2">
-                <Label className="text-foreground">Are you willing to visit Bonita hair and skin clinic?</Label>
+                <Label className="text-foreground">Are you willing to visit Bonitaa hair and skin clinic?</Label>
                 <div className="flex gap-3">
                   <button
                     type="button"

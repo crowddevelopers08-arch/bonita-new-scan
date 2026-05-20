@@ -90,7 +90,7 @@ export default function ThankYouPage() {
                 fontFamily: "monospace",
               }}
             >
-              Bonita@2026
+              Bonitaa@2026
             </div>
             <p
               style={{
