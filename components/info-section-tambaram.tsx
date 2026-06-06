@@ -324,7 +324,7 @@ export function InfoSectionTambaram({ onStartScan }: InfoSectionTambaramProps) {
 
           <div className="info-cta-btns">
             <a
-              href="tel:9363707090"
+              href="tel:9500663866"
               className="info-cta-btn"
               style={{
                 display: "flex", alignItems: "center", gap: "10px",
@@ -340,7 +340,7 @@ export function InfoSectionTambaram({ onStartScan }: InfoSectionTambaramProps) {
               onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(221,185,90,0.4)" }}
             >
               <Phone style={{ width: 20, height: 20 }} />
-              9363707090
+              9500663866
             </a>
           </div>
 

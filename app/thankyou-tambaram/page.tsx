@@ -58,6 +58,28 @@ export default function ThankYouTambaramPage() {
             Our team will connect with you soon.
           </p>
 
+          {/* Call CTA */}
+          <a
+            href="tel:9500663866"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "10px",
+              marginTop: "24px",
+              padding: "14px 32px",
+              borderRadius: "12px",
+              background: "#ddb95a",
+              color: "#080b12",
+              fontSize: "1.05rem",
+              fontWeight: 800,
+              textDecoration: "none",
+              boxShadow: "0 0 28px rgba(221,185,90,0.35)",
+              letterSpacing: "0.02em",
+            }}
+          >
+            📞 9500663866
+          </a>
+
           {/* Promo code section */}
           <div
             style={{
