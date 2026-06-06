@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { prisma, prismaDashboardTwo } from "@/lib/prisma"
+import { prisma, prismaDashboardTwo, prismaTambaram } from "@/lib/prisma"
 import type { Prisma, PrismaClient } from "@prisma/client"
 
 export const runtime = "nodejs"
@@ -168,6 +168,14 @@ function getExportClient(source: string | null): {
       client: prismaDashboardTwo,
       title: "Scan Dashboard Two Leads",
       fileName: "dashboard-two-leads.xls",
+    }
+  }
+
+  if (source === "tambaram") {
+    return {
+      client: prismaTambaram,
+      title: "Tambaram Scan Dashboard Leads",
+      fileName: "tambaram-leads.xls",
     }
   }
 

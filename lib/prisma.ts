@@ -49,10 +49,21 @@ function createPrismaClient(databaseUrl?: string) {
   )
 }
 
+function getTambaramDatabaseUrl() {
+  const databaseUrl =
+    process.env.TAMBARAM_POSTGRES_PRISMA_URL ||
+    process.env.TAMBARAM_DATABASE_URL ||
+    ""
+
+  return databaseUrl ? withPoolDefaults(databaseUrl) : ""
+}
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient
   prismaDashboardTwo: PrismaClient
   prismaDashboardTwoUrl: string
+  prismaTambaram: PrismaClient
+  prismaTambaramUrl: string
 }
 
 export const prisma =
@@ -66,8 +77,18 @@ export const prismaDashboardTwo =
     ? globalForPrisma.prismaDashboardTwo
     : createPrismaClient(dashboardTwoDatabaseUrl)
 
+const tambaramDatabaseUrl = getTambaramDatabaseUrl()
+
+export const prismaTambaram =
+  globalForPrisma.prismaTambaram &&
+  globalForPrisma.prismaTambaramUrl === tambaramDatabaseUrl
+    ? globalForPrisma.prismaTambaram
+    : createPrismaClient(tambaramDatabaseUrl)
+
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma
   globalForPrisma.prismaDashboardTwo = prismaDashboardTwo
   globalForPrisma.prismaDashboardTwoUrl = dashboardTwoDatabaseUrl
+  globalForPrisma.prismaTambaram = prismaTambaram
+  globalForPrisma.prismaTambaramUrl = tambaramDatabaseUrl
 }

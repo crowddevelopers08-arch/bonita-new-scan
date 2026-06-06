@@ -144,6 +144,7 @@ function buildExportUrl(
   const searchParams = new URLSearchParams()
 
   if (basePath === "/dashboardtwo") searchParams.set("source", "dashboardtwo")
+  if (basePath === "/dashboard-tambaram") searchParams.set("source", "tambaram")
   if (params.q) searchParams.set("q", params.q)
   if (params.problem) searchParams.set("problem", params.problem)
   if (params.location) searchParams.set("location", params.location)
