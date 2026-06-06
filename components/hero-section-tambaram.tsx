@@ -103,7 +103,7 @@ export function HeroSectionTambaram({ onStartScan }: HeroSectionTambaramProps) {
 
           <a
             href="tel:9500663866"
-            className="group flex items-center gap-3 border border-primary/40 bg-background/70 px-5 py-3 sm:px-8 sm:py-7 text-base sm:text-lg font-semibold text-foreground shadow-[0_12px_40px_rgba(0,0,0,0.15)] backdrop-blur-sm transition-all hover:border-primary hover:bg-primary/10 hover:text-primary hover:shadow-[0_0_30px_rgba(221,185,90,0.2)] rounded-lg"
+            className="group flex items-center gap-3 border border-primary/40 bg-background/70 px-6 py-3 text-base font-semibold text-foreground shadow-[0_12px_40px_rgba(0,0,0,0.15)] backdrop-blur-sm transition-all hover:border-primary hover:bg-primary/10 hover:text-primary hover:shadow-[0_0_30px_rgba(221,185,90,0.2)] rounded-lg"
           >
             <Phone className="h-5 w-5 transition-transform group-hover:scale-110" />
             9500663866
