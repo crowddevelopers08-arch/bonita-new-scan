@@ -107,7 +107,7 @@ export default function ThankYouTambaramPage() {
           >
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(90deg, transparent, #ddb95a, transparent)" }} />
             <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#ddb95a", marginBottom: "10px" }}>
-              Exclusive Offer
+              Exclusive Offers
             </p>
             <div
               style={{
