@@ -51,7 +51,7 @@ export default function TambaramPage() {
         s.parentNode.insertBefore(t, s)
       }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
       
-      fbq('init', '2435567976947467');
+      fbq('init', '1348530381088676');
       fbq('track', 'PageView');
     }
   }, [])
@@ -100,7 +100,7 @@ export default function TambaramPage() {
             t.src=v;s=b.getElementsByTagName(e)[0];
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '2435567976947467');
+            fbq('init', '1348530381088676');
             fbq('track', 'PageView');
           `,
         }}
@@ -110,7 +110,7 @@ export default function TambaramPage() {
           height="1"
           width="1"
           style={{ display: "none" }}
-          src="https://www.facebook.com/tr?id=2435567976947467&ev=PageView&noscript=1"
+          src="https://www.facebook.com/tr?id=1348530381088676&ev=PageView&noscript=1"
           alt=""
         />
       </noscript>
