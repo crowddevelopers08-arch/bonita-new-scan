@@ -1,16 +1,6 @@
-"use client"
-
 import Script from "next/script"
-import { useEffect } from "react"
 
 export default function ThankYouTambaramPage() {
-  useEffect(() => {
-    // Track SubmitApplication event when the page loads
-    if (typeof window !== 'undefined' && (window as any).fbq) {
-      (window as any).fbq('track', 'SubmitApplication');
-    }
-  }, []);
-
   return (
     <>
       {/* Meta Pixel SubmitApplication Event */}
