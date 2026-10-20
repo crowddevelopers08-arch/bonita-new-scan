@@ -80,7 +80,7 @@ async function downloadFromPublic(pdfPath: string, fileName: string) {
 export function ResultsViewTambaram({ formData, capturedImage, onBack }: ResultsViewTambaramProps) {
   const [pdfFormOpen, setPdfFormOpen] = useState(false)
   const [pdfGenerating, setPdfGenerating] = useState(false)
-  const [pdfForm, setPdfForm] = useState({ name: formData.name || "", phone: formData.phone || "" })
+  const [pdfForm, setPdfForm] = useState({ name: formData.name || "", phone: formData.phone || "", location: "" })
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [clinicVisit, setClinicVisit] = useState<"" | "yes" | "no">("")
 
@@ -90,7 +90,7 @@ export function ResultsViewTambaram({ formData, capturedImage, onBack }: Results
   if (!data) return null
 
   const handleDownload = () => {
-    setPdfForm({ name: formData.name || "", phone: formData.phone || "" })
+    setPdfForm({ name: formData.name || "", phone: formData.phone || "", location: "" })
     setSubmitError(null)
     setClinicVisit("")
     setPdfFormOpen(true)
@@ -98,7 +98,7 @@ export function ResultsViewTambaram({ formData, capturedImage, onBack }: Results
 
   const handlePdfFormSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!pdfForm.name.trim() || !pdfForm.phone.trim()) return
+    if (!pdfForm.name.trim() || !pdfForm.phone.trim() || !pdfForm.location) return
     setPdfGenerating(true)
     try {
       // Save to Tambaram database only
@@ -108,7 +108,7 @@ export function ResultsViewTambaram({ formData, capturedImage, onBack }: Results
         body: JSON.stringify({
           name: pdfForm.name,
           phone: pdfForm.phone,
-          location: "Tambaram",
+          location: pdfForm.location,
           problem,
           imageData: capturedImage ?? "",
           pageUrl: window.location.href,
@@ -340,6 +340,20 @@ export function ResultsViewTambaram({ formData, capturedImage, onBack }: Results
               </div>
 
               <div className="flex flex-col gap-2">
+                <Label htmlFor="pdf-location-tambaram" className="text-foreground">Location</Label>
+                <select
+                  id="pdf-location-tambaram"
+                  value={pdfForm.location}
+                  onChange={(e) => setPdfForm({ ...pdfForm, location: e.target.value })}
+                  className="h-10 w-full rounded-md border border-border/50 bg-background/50 px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                >
+                  <option value="">Select your location</option>
+                  <option value="Tambaram">Tambaram</option>
+                  <option value="Urapakkam">Urapakkam</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-2">
                 <Label className="text-foreground">Are you willing to visit Bonitaa hair and skin clinic?</Label>
                 <div className="flex gap-3">
                   <button
@@ -373,7 +387,7 @@ export function ResultsViewTambaram({ formData, capturedImage, onBack }: Results
 
               <Button
                 type="submit"
-                disabled={!pdfForm.name.trim() || !pdfForm.phone.trim() || clinicVisit !== "yes"}
+                disabled={!pdfForm.name.trim() || !pdfForm.phone.trim() || !pdfForm.location || clinicVisit !== "yes"}
                 className="mt-2 w-full bg-primary text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_20px_rgba(221,185,90,0.4)] disabled:opacity-50"
               >
                 <Download className="mr-2 h-4 w-4" />
